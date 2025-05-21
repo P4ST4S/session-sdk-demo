@@ -5,7 +5,7 @@ import type { DatakeenSessionProps } from "../types/session";
 import type { stepObject } from "../types/session";
 import Paper from "./ui/Paper";
 import { FileUpload } from "./session/FileUpload";
-import Start from "./start-flow/Start";
+import StartSession from "./session/StartSession";
 
 const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
   const [step, setStep] = useState(0);
@@ -24,7 +24,7 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
 
   return (
     <Paper className="w-full h-screen sm:w-[600px] sm:h-[600px] background-white rounded-lg overflow-auto sm:pt-4 sm:pb-4 z-10">
-      {step === 0 && <Start />}
+      {step === 0 && <StartSession stepObject={stepObject} />}
       {step === 1 && <UserInputForm stepObject={stepObject} />}
       {step === 2 && (
         <FileUpload label="Upload File" sublabel="Upload your file here" />

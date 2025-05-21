@@ -4,7 +4,11 @@ import PoweredBy from "../ui/PoweredBy";
 import Subtitle from "../ui/Subtitle";
 import Title from "../ui/Title";
 
-const Start = () => {
+const Start = ({ setStep }: { setStep: (nubr: number) => void }) => {
+  const goOnCGU = () => {
+    setStep(1);
+  };
+
   return (
     <div className="relative flex sm:items-center justify-content w-full px-6 sm:px-12 pt-8 pb-[80px] overflow-hidden sm:flex-col">
       <div className="w-[345px] flex flex-col sm:flex-col-reverse items-center mx-auto overflow-hidden">
@@ -28,7 +32,9 @@ const Start = () => {
 
       <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
         <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
-          <Button className="w-full">Commencer ma vérification</Button>
+          <Button onClick={goOnCGU} className="w-full">
+            Commencer ma vérification
+          </Button>
         </div>
         <PoweredBy />
       </div>
