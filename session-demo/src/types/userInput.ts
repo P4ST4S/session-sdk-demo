@@ -8,4 +8,5 @@ export type UserInput = {
 
 export interface UserInputFormProps {
   stepObject: stepObject;
+  setUserInput: (userInput: UserInput) => void;
 }

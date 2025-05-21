@@ -1,70 +1,165 @@
 import { useState } from "react";
 import * as Label from "@radix-ui/react-label";
-import type { UserInput, UserInputFormProps } from "../../types/userInput";
+import type { UserInputFormProps } from "../../types/userInput";
+import Button from "../ui/Button";
+import PoweredBy from "../ui/PoweredBy";
+import Title from "../ui/Title";
+import Subtitle from "../ui/Subtitle";
 
-const UserInputForm = ({ stepObject }: UserInputFormProps) => {
+const days = Array.from({ length: 31 }, (_, i) => i + 1);
+const years = Array.from(
+  { length: 100 },
+  (_, i) => new Date().getFullYear() - i
+);
+const monthLabels = [
+  "Janvier",
+  "Février",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Août",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Décembre",
+];
+
+const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
   const { setStep, step } = stepObject;
-  const [form, setForm] = useState<UserInput>({
+  const [form, setForm] = useState({
     lastName: "",
     firstName: "",
     birthDate: "",
+    day: "",
+    month: "",
+    year: "",
   });
 
+  const goOnNextStep = () => {
+    if (form.firstName && form.lastName && form.birthDate) {
+      setStep(step + 1);
+      setUserInput({
+        lastName: form.lastName,
+        firstName: form.firstName,
+        birthDate: form.birthDate,
+      });
+    }
+  };
+
   const handleChange = (key: keyof typeof form, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
+    setForm((prev) => {
+      const updated = { ...prev, [key]: value };
+
+      const { day, month, year } = updated;
+      if (day && month && year) {
+        const paddedMonth = month.padStart(2, "0");
+        const paddedDay = day.padStart(2, "0");
+        updated.birthDate = `${year}-${paddedMonth}-${paddedDay}`;
+      } else {
+        updated.birthDate = "";
+      }
+
+      return updated;
+    });
   };
 
   return (
     <form className="space-y-4">
-      <div className="flex flex-col gap-1">
-        <Label.Root htmlFor="firstName" className="text-sm font-medium">
-          Prénom
-        </Label.Root>
-        <input
-          id="firstName"
-          type="text"
-          value={form.firstName}
-          onChange={(e) => handleChange("firstName", e.target.value)}
-          className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      <div className="flex flex-col gap-5 mt-4">
+        <Title>Informations d’identité</Title>
+        <Subtitle>
+          Afin de commencer le processus de vérification, veuillez entrer vos
+          informations d’identité
+        </Subtitle>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <Label.Root htmlFor="lastName" className="text-sm font-medium">
-          Nom
-        </Label.Root>
-        <input
-          id="lastName"
-          type="text"
-          value={form.lastName}
-          onChange={(e) => handleChange("lastName", e.target.value)}
-          className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      <div className="flex flex-col gap-5 mt-8">
+        <div className="flex flex-col gap-1">
+          <Label.Root htmlFor="firstName" className="text-xl font-semibold">
+            Prénom
+          </Label.Root>
+          <input
+            id="firstName"
+            type="text"
+            value={form.firstName}
+            onChange={(e) => handleChange("firstName", e.target.value)}
+            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <Label.Root htmlFor="lastName" className="text-xl font-semibold">
+            Nom
+          </Label.Root>
+          <input
+            id="lastName"
+            type="text"
+            value={form.lastName}
+            onChange={(e) => handleChange("lastName", e.target.value)}
+            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]"
+          />
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <Label.Root className="text-xl font-semibold">
+            Date de naissance
+          </Label.Root>
+          <div className="flex gap-2">
+            {/* Day Select */}
+            <select
+              value={form.day}
+              onChange={(e) => handleChange("day", e.target.value)}
+              className="border border-gray-300 rounded-md p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]"
+            >
+              <option value="">Jour</option>
+              {days.map((d) => (
+                <option key={d} value={String(d)}>
+                  {d}
+                </option>
+              ))}
+            </select>
+
+            {/* Month Select */}
+            <select
+              value={form.month}
+              onChange={(e) => handleChange("month", e.target.value)}
+              className="border border-gray-300 rounded-md p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]"
+            >
+              <option value="">Mois</option>
+              {monthLabels.map((label, i) => (
+                <option key={label} value={String(i + 1).padStart(2, "0")}>
+                  {label}
+                </option>
+              ))}
+            </select>
+
+            {/* Year Select */}
+            <select
+              value={form.year}
+              onChange={(e) => handleChange("year", e.target.value)}
+              className="border border-gray-300 rounded-md p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]"
+            >
+              <option value="">Année</option>
+              {years.map((y) => (
+                <option key={y} value={String(y)}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-1">
-        <Label.Root htmlFor="birthDate" className="text-sm font-medium">
-          Date de naissance
-        </Label.Root>
-        <input
-          id="birthDate"
-          type="date"
-          value={form.birthDate}
-          onChange={(e) => handleChange("birthDate", e.target.value)}
-          className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+      <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
+        <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
+          <Button onClick={goOnNextStep} className="w-full">
+            Continuer
+          </Button>
+        </div>
+        <PoweredBy />
       </div>
-
-      <button
-        type="button"
-        onClick={() => {
-          console.log("Form submitted:", form);
-          setStep(step + 1);
-        }}
-        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Submit
-      </button>
     </form>
   );
 };
