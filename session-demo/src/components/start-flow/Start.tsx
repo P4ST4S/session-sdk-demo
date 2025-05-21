@@ -5,7 +5,7 @@ import Subtitle from "../ui/Subtitle";
 import Title from "../ui/Title";
 
 const Start = ({ setStep }: { setStep: (nubr: number) => void }) => {
-  const goOnCGU = () => {
+  const goOnNextStep = () => {
     setStep(1);
   };
 
@@ -32,7 +32,7 @@ const Start = ({ setStep }: { setStep: (nubr: number) => void }) => {
 
       <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
         <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
-          <Button onClick={goOnCGU} className="w-full">
+          <Button onClick={goOnNextStep} className="w-full">
             Commencer ma vérification
           </Button>
         </div>
