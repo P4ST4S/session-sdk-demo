@@ -14,8 +14,19 @@ import PoweredBy from "../ui/PoweredBy";
 const CGU = ({ setStep }: { setStep: (nubr: number) => void }) => {
   const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
   const [checked, setChecked] = useState(false);
+  const [error, setError] = useState(false);
+
+  const handleCheckboxChange = (value: boolean) => {
+    setChecked(value);
+    setError(false);
+  };
+
   const goOnNextStep = () => {
-    setStep(1);
+    if (checked) {
+      setStep(1);
+    } else {
+      setError(true);
+    }
   };
 
   return (
@@ -51,12 +62,23 @@ const CGU = ({ setStep }: { setStep: (nubr: number) => void }) => {
       </div>
 
       <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
-        <div className="flex flex-row items-center justify-center w-full mt-4 gap-3">
+        {error && (
+          <Body className="text-red-500 text-left mt-4">
+            Vous devez accepter les conditions d’utilisation pour continuer.
+          </Body>
+        )}
+        <div
+          className={`flex flex-row items-center justify-center w-full gap-3 ${
+            error ? "mt-2" : "mt-4"
+          }`}
+        >
           <CheckboxPrimitive.Root
             id="checkbox"
             checked={checked}
-            onCheckedChange={(value) => setChecked(!!value)}
-            className="h-5 w-5 shrink-0 rounded border border-gray-300 bg-white data-[state=checked]:bg-[#11E5C5] data-[state=checked]:border-[#11E5C5]"
+            onCheckedChange={(value) => handleCheckboxChange(!!value)}
+            className={`h-5 w-5 shrink-0 rounded border bg-white data-[state=checked]:bg-[#11E5C5] data-[state=checked]:border-[#11E5C5] ${
+              error ? "border-red-500" : "border-[#C4C4C4]"
+            }`}
           >
             <CheckboxPrimitive.Indicator className="flex items-center justify-center text-white">
               <CheckIcon className="h-4 w-4" />
@@ -64,14 +86,14 @@ const CGU = ({ setStep }: { setStep: (nubr: number) => void }) => {
           </CheckboxPrimitive.Root>
 
           <LabelPrimitive.Root htmlFor="checkbox">
-            <Body className="text-left">
+            <Body className={`text-left ${error ? "text-red-500" : ""}`}>
               Je consens à ce que mes informations biométriques soient traitées
               dans le but de vérifier mon identité à distance.
             </Body>
           </LabelPrimitive.Root>
         </div>
         <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
-          <Button onClick={goOnNextStep} disabled={!checked} className="w-full">
+          <Button onClick={goOnNextStep} className="w-full">
             Continuer
           </Button>
         </div>
