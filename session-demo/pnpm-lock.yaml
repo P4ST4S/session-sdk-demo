@@ -24,8 +24,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       datakeen-session-react:
-        specifier: ^0.0.2
-        version: 0.0.2(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^0.0.3
+        version: 0.0.3(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       lucide-react:
         specifier: ^0.511.0
         version: 0.511.0(react@19.1.0)
@@ -1136,8 +1136,8 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
-  datakeen-session-react@0.0.2:
-    resolution: {integrity: sha512-0uh5Rz7hSWymrWdI7mGMb6BDph5VmI+0gHGhxTs/FFp5UwCgKRcDh19ExhBzql2uZStj0nNCY1Wvdx3tzwY/mg==}
+  datakeen-session-react@0.0.3:
+    resolution: {integrity: sha512-0BS7cXg5/YmJAIjubLhC1wQP3oto/8zkfmdggh3RdkyL1pdwqb30rkN/3AroCtUsEv6QWkjTeFV9mlh86kYjVw==}
     peerDependencies:
       react: ^19.1.0
       react-dom: ^19.1.0
@@ -2990,9 +2990,13 @@ snapshots:
 
   csstype@3.1.3: {}
 
-  datakeen-session-react@0.0.2(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+  datakeen-session-react@0.0.3(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
+      '@radix-ui/react-checkbox': 1.3.2(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-icons': 1.3.2(react@19.1.0)
       '@radix-ui/react-label': 2.1.6(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@radix-ui/react-select': 2.2.5(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      lucide-react: 0.511.0(react@19.1.0)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
     transitivePeerDependencies:
