@@ -12,7 +12,7 @@ const PoweredByIcon = ({ className }: PoweredByIconProps) => {
       fill="none"
       className={className}
     >
-      <g clip-path="url(#clip0_17364_64593)">
+      <g clipPath="url(#clip0_17364_64593)">
         <mask
           id="mask0_17364_64593"
           maskUnits="userSpaceOnUse"
