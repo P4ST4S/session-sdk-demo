@@ -29,8 +29,10 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
   }
 
   useEffect(() => {
-    console.log("Session ID:", sessionId);
-    console.log("User Input:", userInput);
+    if (userInput && userInput.firstName && userInput.lastName) {
+      console.log("Session ID:", sessionId);
+      console.log("User Input:", userInput);
+    }
   }, [sessionId, userInput]);
 
   return (

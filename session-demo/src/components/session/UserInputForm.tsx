@@ -66,7 +66,7 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
   };
 
   return (
-    <form className="space-y-4">
+    <form className="space-y-4 pt-8">
       <div className="flex flex-col gap-5 mt-4">
         <Title>Informations d’identité</Title>
         <Subtitle>
