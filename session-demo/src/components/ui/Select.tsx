@@ -16,7 +16,7 @@ const Select = ({ items, title, selectedItem, onChange }: SelectProps) => {
           if (selected) onChange(selected);
         }}
       >
-        <RadixSelect.Trigger className="inline-flex items-center justify-between w-full px-4 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <RadixSelect.Trigger className="inline-flex items-center justify-between w-full px-4 py-2 text-sm bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]">
           <RadixSelect.Value placeholder="Select an option" />
           <RadixSelect.Icon className="ml-2">
             <ChevronDown className="w-4 h-4" />
@@ -31,12 +31,12 @@ const Select = ({ items, title, selectedItem, onChange }: SelectProps) => {
                   key={item.id}
                   value={item.id}
                   className={
-                    "relative flex select-none items-center rounded-md px-3 py-2 text-sm text-gray-700 cursor-pointer focus:bg-indigo-100 radix-disabled:opacity-50"
+                    "relative flex select-none items-center rounded-md px-3 py-2 text-sm text-gray-700 cursor-pointer focus:bg-[#41f6db25] radix-disabled:opacity-50"
                   }
                 >
                   <RadixSelect.ItemText>{item.label}</RadixSelect.ItemText>
                   <RadixSelect.ItemIndicator className="absolute right-2">
-                    <Check className="w-4 h-4 text-indigo-600" />
+                    <Check className="w-4 h-4 text-[#11E5C5]" />
                   </RadixSelect.ItemIndicator>
                 </RadixSelect.Item>
               ))}

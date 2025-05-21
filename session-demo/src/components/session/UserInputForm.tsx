@@ -28,6 +28,12 @@ const monthLabels = [
 
 const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
   const { setStep, step } = stepObject;
+  const [error, setError] = useState({
+    firstName: false,
+    lastName: false,
+    birthDate: false,
+    notMajor: false,
+  });
   const [form, setForm] = useState({
     lastName: "",
     firstName: "",
@@ -37,7 +43,35 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
     year: "",
   });
 
+  const checkIsMajor = (birthDate: string) => {
+    const today = new Date();
+    const birthDateObj = new Date(birthDate);
+    const age = today.getFullYear() - birthDateObj.getFullYear();
+    const monthDiff = today.getMonth() - birthDateObj.getMonth();
+    const dayDiff = today.getDate() - birthDateObj.getDate();
+    return (
+      age > 18 ||
+      (age === 18 && (monthDiff > 0 || (monthDiff === 0 && dayDiff >= 0)))
+    );
+  };
+
   const goOnNextStep = () => {
+    console.log("form", form);
+    if (!form.firstName) {
+      setError((prev) => ({ ...prev, firstName: true }));
+    }
+    if (!form.lastName) {
+      setError((prev) => ({ ...prev, lastName: true }));
+    }
+    if (!form.birthDate) {
+      setError((prev) => ({ ...prev, birthDate: true }));
+    }
+    // Check if birth date is superior to 18 years
+    if (form.birthDate && !checkIsMajor(form.birthDate)) {
+      setError((prev) => ({ ...prev, notMajor: true }));
+      return;
+    }
+
     if (form.firstName && form.lastName && form.birthDate) {
       setStep(step + 1);
       setUserInput({
@@ -49,6 +83,14 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
   };
 
   const handleChange = (key: keyof typeof form, value: string) => {
+    setError((prev) => ({ ...prev, [key]: false }));
+    if (key === "day" || key === "month" || key === "year") {
+      setError((prev) => ({
+        ...prev,
+        birthDate: false,
+      }));
+    }
+
     setForm((prev) => {
       const updated = { ...prev, [key]: value };
 
@@ -66,7 +108,7 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
   };
 
   return (
-    <form className="space-y-4 pt-8">
+    <div className="space-y-4 pt-8">
       <div className="flex flex-col gap-5 mt-4">
         <Title>Informations d’identité</Title>
         <Subtitle>
@@ -75,8 +117,8 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
         </Subtitle>
       </div>
 
-      <div className="flex flex-col gap-5 mt-8">
-        <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-6 mt-8">
+        <div className="flex flex-col gap-2">
           <Label.Root htmlFor="firstName" className="text-xl font-semibold">
             Prénom
           </Label.Root>
@@ -85,11 +127,16 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
             type="text"
             value={form.firstName}
             onChange={(e) => handleChange("firstName", e.target.value)}
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]"
+            className={`border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#11E5C5] ${
+              error.firstName ? "border-red-500" : "border-gray-300"
+            }`}
           />
+          {error.firstName && (
+            <p className="text-red-500 text-sm">Veuillez entrer votre prénom</p>
+          )}
         </div>
 
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <Label.Root htmlFor="lastName" className="text-xl font-semibold">
             Nom
           </Label.Root>
@@ -98,11 +145,16 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
             type="text"
             value={form.lastName}
             onChange={(e) => handleChange("lastName", e.target.value)}
-            className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]"
+            className={`border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#11E5C5] ${
+              error.lastName ? "border-red-500" : "border-gray-300"
+            }`}
           />
+          {error.lastName && (
+            <p className="text-red-500 text-sm">Veuillez entrer votre nom</p>
+          )}
         </div>
 
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <Label.Root className="text-xl font-semibold">
             Date de naissance
           </Label.Root>
@@ -111,7 +163,12 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
             <select
               value={form.day}
               onChange={(e) => handleChange("day", e.target.value)}
-              className="border border-gray-300 rounded-md p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]"
+              className={`border rounded-md p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]
+                ${
+                  error.birthDate || error.notMajor
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
             >
               <option value="">Jour</option>
               {days.map((d) => (
@@ -125,7 +182,12 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
             <select
               value={form.month}
               onChange={(e) => handleChange("month", e.target.value)}
-              className="border border-gray-300 rounded-md p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]"
+              className={`border rounded-md p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]
+                ${
+                  error.birthDate || error.notMajor
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
             >
               <option value="">Mois</option>
               {monthLabels.map((label, i) => (
@@ -139,7 +201,12 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
             <select
               value={form.year}
               onChange={(e) => handleChange("year", e.target.value)}
-              className="border border-gray-300 rounded-md p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]"
+              className={`border rounded-md p-2 w-1/3 focus:outline-none focus:ring-2 focus:ring-[#11E5C5]
+                ${
+                  error.birthDate || error.notMajor
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
             >
               <option value="">Année</option>
               {years.map((y) => (
@@ -149,6 +216,16 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
               ))}
             </select>
           </div>
+          {error.birthDate && (
+            <p className="text-red-500 text-sm">
+              Veuillez entrer votre date de naissance
+            </p>
+          )}
+          {error.notMajor && (
+            <p className="text-red-500 text-sm">
+              Vous devez être majeur pour continuer
+            </p>
+          )}
         </div>
       </div>
 
@@ -160,7 +237,7 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
         </div>
         <PoweredBy />
       </div>
-    </form>
+    </div>
   );
 };
 
