@@ -5,6 +5,8 @@ import Button from "../ui/Button";
 import PoweredBy from "../ui/PoweredBy";
 import Title from "../ui/Title";
 import Subtitle from "../ui/Subtitle";
+import ButtonDesktop from "../ui/ButtonDesktop";
+import useIsMobile from "../../hooks/useIsMobile";
 
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const years = Array.from(
@@ -28,6 +30,7 @@ const monthLabels = [
 
 const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
   const { setStep, step } = stepObject;
+  const isMobile = useIsMobile();
   const [error, setError] = useState({
     firstName: false,
     lastName: false,
@@ -42,6 +45,8 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
     month: "",
     year: "",
   });
+
+  console.log("isMobile", isMobile);
 
   const checkIsMajor = (birthDate: string) => {
     const today = new Date();
@@ -82,6 +87,10 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
     }
   };
 
+  const goOnPreviousStep = () => {
+    setStep(step - 1);
+  };
+
   const handleChange = (key: keyof typeof form, value: string) => {
     setError((prev) => ({ ...prev, [key]: false }));
     if (key === "day" || key === "month" || key === "year") {
@@ -108,7 +117,7 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
   };
 
   return (
-    <div className="space-y-4 pt-8">
+    <div className="space-y-4 pt-8 relative">
       <div className="flex flex-col gap-5 mt-4">
         <Title>Informations d’identité</Title>
         <Subtitle>
@@ -229,11 +238,24 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
         </div>
       </div>
 
+      {!isMobile && (
+        <div className="flex flex-row justify-end-safe gap-3 mt-12 mb-[-24px]">
+          <ButtonDesktop onClick={goOnPreviousStep} type="back">
+            Retour
+          </ButtonDesktop>
+          <ButtonDesktop onClick={goOnNextStep} type="continue">
+            Continuer
+          </ButtonDesktop>
+        </div>
+      )}
+
       <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
         <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
-          <Button onClick={goOnNextStep} className="w-full">
-            Continuer
-          </Button>
+          {isMobile && (
+            <Button onClick={goOnNextStep} className="w-full">
+              Continuer
+            </Button>
+          )}
         </div>
         <PoweredBy />
       </div>
