@@ -2,11 +2,10 @@ import Button from "../ui/Button";
 import PoweredBy from "../ui/PoweredBy";
 import Subtitle from "../ui/Subtitle";
 import Title from "../ui/Title";
-import { countries } from "../../utils/jdiCountry";
+import { countries, documentTypesFromCountryId } from "../../utils/jdiCountry";
 import type { DrawerItem } from "../../utils/jdiCountry";
 import { useState } from "react";
 import { SelectDrawer } from "../ui/SelectDrawer";
-import { JDIDocumentType } from "../../utils/chooseDocuments/frenchDocumentTypes";
 
 const ChooseCountryJDI = ({ setStep }: { setStep: (nbr: number) => void }) => {
   const [selectedCountry, setSelectedCountry] = useState<DrawerItem | null>(
@@ -26,7 +25,7 @@ const ChooseCountryJDI = ({ setStep }: { setStep: (nbr: number) => void }) => {
             <Title className="mb-5 sm:mb-2">Pays émetteur du document</Title>
             <Subtitle>
               Sélectionnez le pays émetteur indiqué sur votre document
-              d’identité
+              d’identité, ainsi que le type de document que vous souhaitez
             </Subtitle>
           </div>
         </div>
@@ -44,7 +43,7 @@ const ChooseCountryJDI = ({ setStep }: { setStep: (nbr: number) => void }) => {
           <div className="flex flex-col sm:flex-row items-center mt-[-30px]">
             <SelectDrawer
               title="Type de document"
-              items={JDIDocumentType}
+              items={documentTypesFromCountryId(selectedCountry.id)}
               selectedItem={selectedDocumentType}
               onChange={setSelectedDocumentType}
             />
