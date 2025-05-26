@@ -9,6 +9,22 @@ import StartSession from "./session/StartSession";
 import type { UserInput } from "../types/userInput";
 import ChooseCountryJDI from "./session/ChooseCountryJDI";
 
+/**
+ * DatakeenSession Component
+ *
+ * The main component of the Datakeen SDK that manages the multi-step verification flow.
+ * This component handles the different steps of the session process, including:
+ * - Initial welcome screen
+ * - User information collection
+ * - Country selection for JDI verification
+ *
+ * The component maintains internal state for the current step and user input data,
+ * progressing through the verification workflow as the user completes each step.
+ *
+ * @param {DatakeenSessionProps} props - Component props
+ * @param {string} props.sessionId - Unique identifier for the verification session
+ * @returns {JSX.Element} A Paper-wrapped container with the appropriate step component based on current state
+ */
 const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
   const [step, setStep] = useState(0);
   const [userInput, setUserInput] = useState<UserInput>({
