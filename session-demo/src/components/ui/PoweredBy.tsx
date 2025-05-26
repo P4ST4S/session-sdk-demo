@@ -1,5 +1,15 @@
 import PoweredByIcon from "../icons/PoweredByIcon";
 
+/**
+ * PoweredBy component
+ *
+ * A simple component that displays "Propulsé par" (Powered by) text followed by a logo.
+ * Used to attribute the service provider at the bottom of forms or pages.
+ *
+ * @param {Object} props - Component props
+ * @param {string} [props.className] - Optional additional CSS classes to apply
+ * @returns {JSX.Element} A container with text and logo centered horizontally
+ */
 interface PoweredByProps {
   className?: string;
 }

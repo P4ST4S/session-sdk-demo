@@ -1,3 +1,16 @@
+/**
+ * Button component
+ *
+ * A customizable button component with consistent styling.
+ * Features a teal background, rounded corners, and hover/active states.
+ *
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Content to be rendered inside the button
+ * @param {string} [props.className] - Optional additional CSS classes to apply
+ * @param {() => void} [props.onClick] - Optional click handler function
+ * @param {boolean} [props.disabled=false] - Whether the button is disabled (defaults to false)
+ * @returns {JSX.Element} Styled button element containing the children
+ */
 interface ButtonProps {
   children: React.ReactNode;
   className?: string;

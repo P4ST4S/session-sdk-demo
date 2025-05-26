@@ -3,6 +3,19 @@ import type { SelectProps } from "../../types/ui/select";
 import * as RadixSelect from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
 
+/**
+ * Select component
+ *
+ * A customized dropdown select component built with Radix UI.
+ * Features a labeled dropdown with custom styling, icons, and animated dropdown menu.
+ *
+ * @param {Object} props - Component props
+ * @param {Array<{id: string, label: string}>} props.items - Array of selectable options
+ * @param {string} props.title - Label text displayed above the select control
+ * @param {{id: string, label: string}} props.selectedItem - Currently selected item
+ * @param {Function} props.onChange - Callback function triggered when selection changes
+ * @returns {JSX.Element} A styled select dropdown with label and options list
+ */
 const Select = ({ items, title, selectedItem, onChange }: SelectProps) => {
   return (
     <div className="w-64">
