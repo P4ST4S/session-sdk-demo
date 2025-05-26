@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import UserInputForm from "./session/UserInputForm";
 // import StartSession from "./session/StartSession";
 import type { DatakeenSessionProps } from "../types/session";
