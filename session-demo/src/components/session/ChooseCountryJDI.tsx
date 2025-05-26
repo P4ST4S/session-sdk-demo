@@ -36,6 +36,7 @@ const ChooseCountryJDI = ({ setStep }: { setStep: (nbr: number) => void }) => {
             items={countries}
             selectedItem={selectedCountry}
             onChange={setSelectedCountry}
+            errorMessage="Aucun pays trouvé"
           />
         </div>
 
@@ -46,6 +47,7 @@ const ChooseCountryJDI = ({ setStep }: { setStep: (nbr: number) => void }) => {
               items={documentTypesFromCountryId(selectedCountry.id)}
               selectedItem={selectedDocumentType}
               onChange={setSelectedDocumentType}
+              errorMessage="Aucun type de document trouvé"
             />
           </div>
         )}

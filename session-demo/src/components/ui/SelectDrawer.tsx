@@ -9,6 +9,7 @@ type Props = {
   selectedItem: DrawerItem | null;
   onChange: (item: DrawerItem | null) => void;
   className?: string;
+  errorMessage?: string;
 };
 
 export const SelectDrawer: React.FC<Props> = ({
@@ -17,6 +18,7 @@ export const SelectDrawer: React.FC<Props> = ({
   selectedItem,
   onChange,
   className = "",
+  errorMessage = "",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -98,7 +100,7 @@ export const SelectDrawer: React.FC<Props> = ({
               })}
               {filteredItems.length === 0 && (
                 <li className="text-center text-gray-400 text-sm py-2">
-                  Aucun pays trouvé
+                  {errorMessage || "Aucun résultat trouvé"}
                 </li>
               )}
             </ul>
