@@ -9,9 +9,11 @@ import { SelectDrawer } from "../ui/SelectDrawer";
 import { JDIDocumentType } from "../../utils/chooseDocuments/frenchDocumentTypes";
 
 const ChooseCountryJDI = ({ setStep }: { setStep: (nbr: number) => void }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState<DrawerItem | null>(
+  const [selectedCountry, setSelectedCountry] = useState<DrawerItem | null>(
     null
   );
+  const [selectedDocumentType, setSelectedDocumentType] =
+    useState<DrawerItem | null>(null);
   const goOnNextStep = () => {
     setStep(0);
   };
@@ -33,19 +35,21 @@ const ChooseCountryJDI = ({ setStep }: { setStep: (nbr: number) => void }) => {
           <SelectDrawer
             title="Pays émetteur"
             items={countries}
-            selectedItem={selectedLanguage}
-            onChange={setSelectedLanguage}
+            selectedItem={selectedCountry}
+            onChange={setSelectedCountry}
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center mt-[-30px]">
-          <SelectDrawer
-            title="Type de document"
-            items={JDIDocumentType}
-            selectedItem={selectedLanguage}
-            onChange={setSelectedLanguage}
-          />
-        </div>
+        {selectedCountry && (
+          <div className="flex flex-col sm:flex-row items-center mt-[-30px]">
+            <SelectDrawer
+              title="Type de document"
+              items={JDIDocumentType}
+              selectedItem={selectedDocumentType}
+              onChange={setSelectedDocumentType}
+            />
+          </div>
+        )}
       </div>
 
       <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
