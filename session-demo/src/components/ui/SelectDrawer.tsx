@@ -3,6 +3,21 @@ import { Dialog } from "@headlessui/react";
 import { ChevronDownIcon, SearchIcon } from "lucide-react";
 import type { DrawerItem } from "../../utils/jdiCountry";
 
+/**
+ * SelectDrawer component
+ *
+ * A mobile-friendly select component that opens a bottom drawer with searchable options.
+ * Features a title, searchable item list, and customizable error messaging.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.title - Label text displayed above the select control
+ * @param {DrawerItem[]} props.items - Array of selectable options with id and label
+ * @param {DrawerItem|null} props.selectedItem - Currently selected item or null if none selected
+ * @param {(item: DrawerItem|null) => void} props.onChange - Callback function triggered when selection changes
+ * @param {string} [props.className=""] - Optional additional CSS classes to apply
+ * @param {string} [props.errorMessage=""] - Custom error message shown when no results match search
+ * @returns {JSX.Element} A select component that opens a searchable drawer when clicked
+ */
 type Props = {
   title: string;
   items: DrawerItem[];
