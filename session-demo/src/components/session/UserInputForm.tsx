@@ -46,8 +46,6 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
     year: "",
   });
 
-  console.log("isMobile", isMobile);
-
   const checkIsMajor = (birthDate: string) => {
     const today = new Date();
     const birthDateObj = new Date(birthDate);
@@ -61,7 +59,6 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
   };
 
   const goOnNextStep = () => {
-    console.log("form", form);
     if (!form.firstName) {
       setError((prev) => ({ ...prev, firstName: true }));
     }

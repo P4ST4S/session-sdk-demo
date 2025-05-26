@@ -29,12 +29,13 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
     );
   }
 
-  useEffect(() => {
-    if (userInput && userInput.firstName && userInput.lastName) {
-      console.log("Session ID:", sessionId);
-      console.log("User Input:", userInput);
-    }
-  }, [sessionId, userInput]);
+  // Uncomment the following useEffect if you want to log sessionId and userInput
+  // useEffect(() => {
+  //   if (userInput && userInput.firstName && userInput.lastName) {
+  //     console.log("Session ID:", sessionId);
+  //     console.log("User Input:", userInput);
+  //   }
+  // }, [sessionId, userInput]);
 
   return (
     <Paper className="w-full h-screen sm:w-[600px] sm:h-[600px] background-white rounded-lg overflow-auto sm:pt-4 sm:pb-4 z-10">
