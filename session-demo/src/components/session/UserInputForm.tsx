@@ -114,7 +114,7 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
   };
 
   return (
-    <div className="space-y-4 pt-8 relative">
+    <div className="space-y-4 pt-8 relative justify-center items-center w-full max-w-[322px] mx-auto">
       <div className="flex flex-col gap-5 mt-4">
         <Title>Informations d’identité</Title>
         <Subtitle>
@@ -123,7 +123,7 @@ const UserInputForm = ({ stepObject, setUserInput }: UserInputFormProps) => {
         </Subtitle>
       </div>
 
-      <div className="flex flex-col gap-6 mt-8">
+      <div className="flex flex-col gap-6 mt-8 w-[322px]">
         <div className="flex flex-col gap-2">
           <Label.Root htmlFor="firstName" className="text-xl font-semibold">
             Prénom

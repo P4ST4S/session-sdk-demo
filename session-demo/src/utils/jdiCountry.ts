@@ -1,4 +1,4 @@
-export type Country = {
+export type DrawerItem = {
   id: string;
   label: string;
 };

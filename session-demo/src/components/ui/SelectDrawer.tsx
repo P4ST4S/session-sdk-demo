@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { ChevronDownIcon, SearchIcon } from "lucide-react";
-
-type Country = {
-  id: string;
-  label: string;
-};
+import type { DrawerItem } from "../../utils/jdiCountry";
 
 type Props = {
   title: string;
-  items: Country[];
-  selectedItem: Country | null;
-  onChange: (item: Country | null) => void;
+  items: DrawerItem[];
+  selectedItem: DrawerItem | null;
+  onChange: (item: DrawerItem | null) => void;
   className?: string;
 };
 
-export const CountrySelectDrawer: React.FC<Props> = ({
+export const SelectDrawer: React.FC<Props> = ({
   title,
   items,
   selectedItem,
@@ -31,7 +27,9 @@ export const CountrySelectDrawer: React.FC<Props> = ({
 
   return (
     <>
-      <div className={`flex flex-col px-4 py-6 space-y-2 ${className}`}>
+      <div
+        className={`flex flex-col py-6 space-y-2 w-full max-w-[322px] mx-auto ${className}`}
+      >
         <h2 className="text-xl font-bold text-left text-[#3C3C40]">{title}</h2>
 
         <button

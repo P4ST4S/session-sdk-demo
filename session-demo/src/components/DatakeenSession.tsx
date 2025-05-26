@@ -7,7 +7,7 @@ import Paper from "./ui/Paper";
 import { FileUpload } from "./session/FileUpload";
 import StartSession from "./session/StartSession";
 import type { UserInput } from "../types/userInput";
-import ChooseCountry from "./session/ChooseCountry";
+import ChooseCountryJDI from "./session/ChooseCountryJDI";
 
 const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
   const [step, setStep] = useState(0);
@@ -43,7 +43,7 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
       {step === 1 && (
         <UserInputForm stepObject={stepObject} setUserInput={setUserInput} />
       )}
-      {step === 2 && <ChooseCountry setStep={setStep} />}
+      {step === 2 && <ChooseCountryJDI setStep={setStep} />}
       {step === 3 && (
         <FileUpload label="Upload File" sublabel="Upload your file here" />
       )}

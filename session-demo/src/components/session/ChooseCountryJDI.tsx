@@ -3,12 +3,13 @@ import PoweredBy from "../ui/PoweredBy";
 import Subtitle from "../ui/Subtitle";
 import Title from "../ui/Title";
 import { countries } from "../../utils/jdiCountry";
-import type { Country } from "../../utils/jdiCountry";
+import type { DrawerItem } from "../../utils/jdiCountry";
 import { useState } from "react";
-import { CountrySelectDrawer } from "../ui/CountrySelectDrawer";
+import { SelectDrawer } from "../ui/SelectDrawer";
+import { JDIDocumentType } from "../../utils/chooseDocuments/frenchDocumentTypes";
 
-const ChooseCountry = ({ setStep }: { setStep: (nbr: number) => void }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState<Country | null>(
+const ChooseCountryJDI = ({ setStep }: { setStep: (nbr: number) => void }) => {
+  const [selectedLanguage, setSelectedLanguage] = useState<DrawerItem | null>(
     null
   );
   const goOnNextStep = () => {
@@ -17,8 +18,8 @@ const ChooseCountry = ({ setStep }: { setStep: (nbr: number) => void }) => {
 
   return (
     <div className="relative flex sm:items-center justify-content w-full px-6 sm:px-12 pt-8 pb-[80px] overflow-hidden sm:flex-col">
-      <div className="flex flex-col gap-5 mt-4">
-        <div className="w-[345px] flex flex-col sm:flex-col-reverse items-center mx-auto overflow-hidden">
+      <div className="flex flex-col gap-5 mt-4 mx-auto w-full max-w-[322px]">
+        <div className="flex flex-col sm:flex-col-reverse items-center mx-auto overflow-hidden">
           <div className="flex flex-col">
             <Title className="mb-5 sm:mb-2">Pays émetteur du document</Title>
             <Subtitle>
@@ -28,13 +29,21 @@ const ChooseCountry = ({ setStep }: { setStep: (nbr: number) => void }) => {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-2">
-          <CountrySelectDrawer
+        <div className="flex flex-col sm:flex-row items-center">
+          <SelectDrawer
             title="Pays émetteur"
             items={countries}
             selectedItem={selectedLanguage}
             onChange={setSelectedLanguage}
-            className="w-full h-[60px"
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center mt-[-30px]">
+          <SelectDrawer
+            title="Type de document"
+            items={JDIDocumentType}
+            selectedItem={selectedLanguage}
+            onChange={setSelectedLanguage}
           />
         </div>
       </div>
@@ -51,4 +60,4 @@ const ChooseCountry = ({ setStep }: { setStep: (nbr: number) => void }) => {
   );
 };
 
-export default ChooseCountry;
+export default ChooseCountryJDI;
