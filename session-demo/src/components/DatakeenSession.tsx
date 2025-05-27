@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserInputForm from "./session/UserInputForm";
 // import StartSession from "./session/StartSession";
 import type { DatakeenSessionProps } from "../types/session";
@@ -32,6 +32,8 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
     firstName: "",
     birthDate: "",
   });
+  const [country, setCountry] = useState<string | null>(null);
+  const [documentType, setDocumentType] = useState<string | null>(null);
   const stepObject: stepObject = {
     setStep,
     step,
@@ -46,12 +48,19 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
   }
 
   // Uncomment the following useEffect if you want to log sessionId and userInput
-  // useEffect(() => {
-  //   if (userInput && userInput.firstName && userInput.lastName) {
-  //     console.log("Session ID:", sessionId);
-  //     console.log("User Input:", userInput);
-  //   }
-  // }, [sessionId, userInput]);
+  useEffect(() => {
+    if (userInput && userInput.firstName && userInput.lastName) {
+      console.log("Session ID:", sessionId);
+      console.log("User Input:", userInput);
+    }
+  }, [sessionId, userInput]);
+
+  useEffect(() => {
+    if (country && documentType) {
+      console.log("Selected Country:", country);
+      console.log("Selected Document Type:", documentType);
+    }
+  }, [country, documentType]);
 
   return (
     <Paper className="w-full h-screen sm:w-[600px] sm:h-[600px] background-white rounded-lg overflow-auto sm:pt-4 sm:pb-4 z-10">
@@ -59,7 +68,13 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
       {step === 1 && (
         <UserInputForm stepObject={stepObject} setUserInput={setUserInput} />
       )}
-      {step === 2 && <ChooseCountryJDI setStep={setStep} />}
+      {step === 2 && (
+        <ChooseCountryJDI
+          setStep={setStep}
+          setCountry={setCountry}
+          setDocumentType={setDocumentType}
+        />
+      )}
       {step === 3 && (
         <FileUpload label="Upload File" sublabel="Upload your file here" />
       )}

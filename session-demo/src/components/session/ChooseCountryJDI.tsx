@@ -1,3 +1,42 @@
+/**
+ * @file ChooseCountryJDI.tsx
+ * @description This component provides a UI for users to select their document's issuing country
+ * and document type for identity verification.
+ *
+ * @component ChooseCountryJDI
+ *
+ * @props {function} setStep - Callback function to change the current step in the parent component
+ *                             workflow. Called with 0 when the user proceeds to the next step.
+ * @props {function} setCountry - Callback function to set the selected country in the parent
+ *                                component. Receives the country ID or null.
+ * @props {function} setDocumentType - Callback function to set the selected document type in the
+ *                                    parent component. Receives the document type ID or null.
+ *
+ * @state {DrawerItem|null} selectedCountry - Stores the user's selected country as a DrawerItem
+ *                                           object containing id and label properties.
+ * @state {DrawerItem|null} selectedDocumentType - Stores the user's selected document type as a
+ *                                                DrawerItem object.
+ *
+ * @flow
+ * 1. User selects a country from the dropdown
+ * 2. Based on the selected country, document type options are displayed
+ * 3. User selects a document type
+ * 4. User clicks "Commencer ma vérification" to proceed
+ * 5. Selected country and document type are passed to parent component via callbacks
+ *
+ * @dependencies
+ * - countries - Array of country objects imported from jdiCountry utils
+ * - documentTypesFromCountryId - Function to get document types based on country ID
+ * - SelectDrawer - UI component for selecting options from a drawer
+ *
+ * @example
+ * <ChooseCountryJDI
+ *   setStep={(step) => setCurrentStep(step)}
+ *   setCountry={(country) => setSelectedCountry(country)}
+ *   setDocumentType={(docType) => setSelectedDocType(docType)}
+ * />
+ */
+
 import Button from "../ui/Button";
 import PoweredBy from "../ui/PoweredBy";
 import Subtitle from "../ui/Subtitle";
@@ -7,14 +46,27 @@ import type { DrawerItem } from "../../utils/jdiCountry";
 import { useState } from "react";
 import { SelectDrawer } from "../ui/SelectDrawer";
 
-const ChooseCountryJDI = ({ setStep }: { setStep: (nbr: number) => void }) => {
+interface ChooseCountryJDIProps {
+  setStep: (nbr: number) => void;
+  setCountry: (country: string | null) => void;
+  setDocumentType: (documentType: string | null) => void;
+}
+
+const ChooseCountryJDI = ({
+  setStep,
+  setCountry,
+  setDocumentType,
+}: ChooseCountryJDIProps) => {
   const [selectedCountry, setSelectedCountry] = useState<DrawerItem | null>(
     null
   );
   const [selectedDocumentType, setSelectedDocumentType] =
     useState<DrawerItem | null>(null);
+
   const goOnNextStep = () => {
     setStep(0);
+    setCountry(selectedCountry?.id || null);
+    setDocumentType(selectedDocumentType?.id || null);
   };
 
   return (
