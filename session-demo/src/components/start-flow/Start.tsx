@@ -1,3 +1,30 @@
+/**
+ * @file Start.tsx
+ * @description This component serves as the initial welcome screen in the identity verification flow.
+ * It provides users with an introduction to the verification process and a button to begin.
+ *
+ * @component Start
+ *
+ * @props {function} setStep - Callback function to change the current step in the parent component
+ *                            workflow. Called with 1 when the user clicks to start verification.
+ *
+ * @flow
+ * 1. User is presented with a welcome screen explaining the identity verification purpose
+ * 2. User clicks "Commencer ma vérification" (Start my verification) to proceed
+ * 3. On button click, user is taken to the next step (CGU/Terms of Use)
+ *
+ * @responsiveness
+ * - Mobile: Displays the StartIcon below the title and subtitle
+ * - Desktop: Displays the StartIcon above the title and subtitle and shows additional terms notice
+ *
+ * @dependencies
+ * - StartIcon - SVG icon component for visual representation
+ * - UI components for consistent styling (Title, Subtitle, Button, etc.)
+ *
+ * @example
+ * <Start setStep={(step) => setCurrentStep(step)} />
+ */
+
 import StartIcon from "../icons/StartIcon";
 import Button from "../ui/Button";
 import PoweredBy from "../ui/PoweredBy";
@@ -5,7 +32,7 @@ import Subtitle from "../ui/Subtitle";
 import Title from "../ui/Title";
 
 const Start = ({ setStep }: { setStep: (nubr: number) => void }) => {
-  const goOnNextStep = () => {
+  const goOnCGU = () => {
     setStep(1);
   };
 
@@ -32,7 +59,7 @@ const Start = ({ setStep }: { setStep: (nubr: number) => void }) => {
 
       <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
         <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
-          <Button onClick={goOnNextStep} className="w-full">
+          <Button onClick={goOnCGU} className="w-full">
             Commencer ma vérification
           </Button>
         </div>

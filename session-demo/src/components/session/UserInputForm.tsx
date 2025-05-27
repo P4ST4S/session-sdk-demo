@@ -1,3 +1,56 @@
+/**
+ * @file UserInputForm.tsx
+ * @description This component provides a form for users to input their identity information
+ * including first name, last name, and date of birth for identity verification.
+ *
+ * @component UserInputForm
+ *
+ * @props {object} stepObject - Object containing step management functions from the parent component
+ * @props {function} stepObject.setStep - Function to change the current step in the parent workflow
+ * @props {number} stepObject.step - Current step number in the parent workflow
+ * @props {function} setUserInput - Callback function to set the user input data in the parent component
+ *
+ * @state {object} form - Object containing form input values
+ * @state {string} form.firstName - User's first name
+ * @state {string} form.lastName - User's last name
+ * @state {string} form.birthDate - Formatted birth date (YYYY-MM-DD)
+ * @state {string} form.day - Selected day of birth
+ * @state {string} form.month - Selected month of birth
+ * @state {string} form.year - Selected year of birth
+ *
+ * @state {object} error - Object tracking validation errors
+ * @state {boolean} error.firstName - Whether first name has an error
+ * @state {boolean} error.lastName - Whether last name has an error
+ * @state {boolean} error.birthDate - Whether birth date has an error
+ * @state {boolean} error.notMajor - Whether user is not of legal age (18+)
+ *
+ * @validation
+ * - All fields are required (first name, last name, birth date)
+ * - User must be at least 18 years old (calculated from birth date)
+ *
+ * @flow
+ * 1. User enters their first name, last name, and selects their date of birth
+ * 2. Form validates that all fields are filled and user is of legal age
+ * 3. On successful validation, data is passed to parent component and user proceeds
+ * 4. User can go back to previous step if needed
+ *
+ * @responsiveness
+ * - Displays different button layouts for mobile and desktop devices
+ * - Mobile: Single "Continue" button at the bottom of the screen
+ * - Desktop: "Back" and "Continue" buttons side by side
+ *
+ * @dependencies
+ * - useIsMobile - Custom hook to detect if the user is on a mobile device
+ * - Radix UI Label - For accessible form labels
+ * - Button components - For navigation actions
+ *
+ * @example
+ * <UserInputForm
+ *   stepObject={{ step: 1, setStep: (step) => setCurrentStep(step) }}
+ *   setUserInput={(data) => handleUserData(data)}
+ * />
+ */
+
 import { useState } from "react";
 import * as Label from "@radix-ui/react-label";
 import type { UserInputFormProps } from "../../types/userInput";

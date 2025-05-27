@@ -1,3 +1,38 @@
+/**
+ * @file CGU.tsx
+ * @description This component displays the Conditions Générales d'Utilisation (Terms of Use)
+ * that users must accept before proceeding with the identity verification process.
+ * It provides options to select a language and requires user consent for biometric data processing.
+ *
+ * @component CGU
+ *
+ * @props {function} setStep - Callback function to change the current step in the parent component
+ *                            workflow. Called with 1 when the user accepts the terms and proceeds.
+ *
+ * @state {object} selectedLanguage - Currently selected language for displaying the terms.
+ * @state {boolean} checked - Whether the user has checked the consent checkbox.
+ * @state {boolean} error - Whether there's an error state (user tried to proceed without consent).
+ *
+ * @validation
+ * - User must check the consent checkbox to proceed.
+ * - Error message appears if user attempts to continue without checking the box.
+ *
+ * @flow
+ * 1. User views the terms of use in their selected language
+ * 2. User must check the consent checkbox acknowledging biometric data processing
+ * 3. User clicks "Continuer" to proceed
+ * 4. If checkbox is checked, user advances to the next step
+ * 5. If checkbox is not checked, an error message is displayed
+ *
+ * @dependencies
+ * - languages - Array of available languages imported from languages utils
+ * - Radix UI components for accessible checkbox implementation
+ * - UI components for consistent styling (Body, Title, Button, etc.)
+ *
+ * @example
+ * <CGU setStep={(step) => setCurrentStep(step)} />
+ */
+
 import Body from "../ui/Body";
 import Title from "../ui/Title";
 import Select from "../ui/Select";
