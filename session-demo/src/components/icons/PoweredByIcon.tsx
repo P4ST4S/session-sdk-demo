@@ -1,8 +1,6 @@
-interface PoweredByIconProps {
-  className?: string;
-}
+import type { IconProps } from "../../types/icons";
 
-const PoweredByIcon = ({ className }: PoweredByIconProps) => {
+const PoweredByIcon = ({ className }: IconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
