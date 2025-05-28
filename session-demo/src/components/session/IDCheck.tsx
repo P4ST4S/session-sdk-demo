@@ -18,9 +18,7 @@ const IDCheck = ({ stepObject }: IDCheckProps) => {
   return (
     <>
       {internalStep === 0 && <BeforePhoto setStep={setInternalStep} />}
-      {internalStep === 1 && (
-        <Photo orientation="landscape" onCapture={onCapture} />
-      )}
+      {internalStep === 1 && <Photo onCapture={onCapture} />}
     </>
   );
 };

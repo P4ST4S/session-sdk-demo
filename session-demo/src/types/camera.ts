@@ -1,8 +1,8 @@
-export type CameraOrientation = "landscape" | "portrait";
+export type CameraFacingMode = "environment" | "user";
 
 export interface CameraConstraints {
   video: {
-    facingMode: string;
+    facingMode: CameraFacingMode;
     width: { ideal: number };
     height: { ideal: number };
   };

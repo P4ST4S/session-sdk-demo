@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import type { CameraOrientation } from "../../types/camera";
+import type { CameraFacingMode } from "../../types/camera";
 import { cameraService } from "../../services/cameraService";
 import { documentDetectionService } from "../../services/documentDetectionService";
 import CameraError from "./CameraError";
@@ -8,25 +8,37 @@ import OrientationToggle from "./OrientationToggle";
 
 interface PhotoProps {
   onCapture: (image: string) => void;
-  orientation: CameraOrientation;
 }
 
-const Photo: React.FC<PhotoProps> = ({
-  onCapture,
-  orientation = "landscape",
-}) => {
+const Photo: React.FC<PhotoProps> = ({ onCapture }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDetecting, setIsDetecting] = useState(false);
-  const [deviceOrientation, setDeviceOrientation] =
-    useState<CameraOrientation>(orientation);
+  const [facingMode, setFacingMode] = useState<CameraFacingMode>("environment");
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [isPortrait, setIsPortrait] = useState(
+    window.matchMedia("(orientation: portrait)").matches
+  );
+
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      setIsPortrait(window.matchMedia("(orientation: portrait)").matches);
+    };
+
+    const mediaQuery = window.matchMedia("(orientation: portrait)");
+    mediaQuery.addEventListener("change", handleOrientationChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleOrientationChange);
+    };
+  }, []);
 
   useEffect(() => {
     const initCamera = async () => {
       const result = await cameraService.startCamera(
         videoRef.current,
-        deviceOrientation
+        isPortrait,
+        facingMode
       );
 
       if (result.success) {
@@ -44,7 +56,7 @@ const Photo: React.FC<PhotoProps> = ({
       cameraService.stopCamera();
       setIsDetecting(false);
     };
-  }, [deviceOrientation]);
+  }, [isPortrait, facingMode]);
 
   useEffect(() => {
     if (!isDetecting) return;
@@ -63,10 +75,8 @@ const Photo: React.FC<PhotoProps> = ({
     };
   }, [isDetecting, onCapture]);
 
-  const toggleOrientation = () => {
-    setDeviceOrientation((prev) =>
-      prev === "landscape" ? "portrait" : "landscape"
-    );
+  const toggleCamera = () => {
+    setFacingMode((prev) => (prev === "environment" ? "user" : "environment"));
   };
 
   const handleRetry = () => {
@@ -86,7 +96,7 @@ const Photo: React.FC<PhotoProps> = ({
             playsInline
             muted
             className={`absolute inset-0 w-full h-full object-cover z-0 ${
-              deviceOrientation === "landscape" ? "rotate-0" : "rotate-90"
+              facingMode === "user" ? "scale-x-[-1]" : ""
             }`}
           />
 
@@ -94,10 +104,14 @@ const Photo: React.FC<PhotoProps> = ({
           <canvas ref={canvasRef} className="hidden" />
 
           {/* Mask */}
-          <CameraMask isDetecting={isDetecting} />
+          <CameraMask
+            isDetecting={isDetecting}
+            isPortrait={isPortrait}
+            facingMode={facingMode}
+          />
 
           {/* Button to change orientation */}
-          <OrientationToggle onToggle={toggleOrientation} />
+          <OrientationToggle onCameraToggle={toggleCamera} />
         </>
       )}
     </div>

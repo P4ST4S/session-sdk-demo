@@ -1,4 +1,4 @@
-import type { CameraConstraints, CameraOrientation } from "../types/camera";
+import type { CameraConstraints, CameraFacingMode } from "../types/camera";
 
 // Permit to enable development mode to test without a camera
 const DEV_MODE = import.meta.env.DEV;
@@ -66,7 +66,8 @@ export class CameraService {
 
   async startCamera(
     videoElement: HTMLVideoElement | null,
-    orientation: CameraOrientation
+    orientation: boolean,
+    facingMode: CameraFacingMode = "environment"
   ): Promise<{ success: boolean; error?: string }> {
     // If development mode is enabled, use a mock image instead of the camera
     if (this.devMode) {
@@ -76,9 +77,9 @@ export class CameraService {
     try {
       const constraints: CameraConstraints = {
         video: {
-          facingMode: "environment",
-          width: { ideal: orientation === "landscape" ? 1920 : 1080 },
-          height: { ideal: orientation === "landscape" ? 1080 : 1920 },
+          facingMode: facingMode,
+          width: { ideal: orientation ? 1920 : 1080 },
+          height: { ideal: orientation ? 1080 : 1920 },
         },
       };
 
