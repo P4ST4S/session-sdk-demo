@@ -64,7 +64,7 @@ const ChooseCountryJDI = ({
     useState<DrawerItem | null>(null);
 
   const goOnNextStep = () => {
-    setStep(0);
+    setStep(3);
     setCountry(selectedCountry?.id || null);
     setDocumentType(selectedDocumentType?.id || null);
   };

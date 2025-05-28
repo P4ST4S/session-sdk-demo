@@ -8,6 +8,7 @@ import { FileUpload } from "./session/FileUpload";
 import StartSession from "./session/StartSession";
 import type { UserInput } from "../types/userInput";
 import ChooseCountryJDI from "./session/ChooseCountryJDI";
+import IDCheck from "./session/IDCheck";
 
 /**
  * DatakeenSession Component
@@ -64,7 +65,7 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
 
   return (
     <Paper className="w-full h-screen sm:w-[600px] sm:h-[600px] background-white rounded-lg overflow-auto sm:pt-4 sm:pb-4 z-10">
-      {step === 0 && <StartSession stepObject={stepObject} />}
+      {step === 3 && <StartSession stepObject={stepObject} />}
       {step === 1 && (
         <UserInputForm stepObject={stepObject} setUserInput={setUserInput} />
       )}
@@ -75,9 +76,7 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
           setDocumentType={setDocumentType}
         />
       )}
-      {step === 3 && (
-        <FileUpload label="Upload File" sublabel="Upload your file here" />
-      )}
+      {step === 0 && <IDCheck stepObject={stepObject} />}
     </Paper>
   );
 };
