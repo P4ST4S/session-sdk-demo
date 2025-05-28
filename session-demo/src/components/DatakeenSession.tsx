@@ -64,7 +64,7 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
   }, [country, documentType]);
 
   return (
-    <Paper className="w-full h-screen sm:w-[600px] sm:h-[600px] background-white rounded-lg overflow-auto sm:pt-4 sm:pb-4 z-10">
+    <Paper className="w-full h-screen lg:w-[600px] lg:h-[600px] background-white rounded-lg overflow-auto sm:pt-4 sm:pb-4 z-10">
       {step === 3 && <StartSession stepObject={stepObject} />}
       {step === 1 && (
         <UserInputForm stepObject={stepObject} setUserInput={setUserInput} />
