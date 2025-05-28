@@ -1,74 +1,131 @@
-/**
- * Service for document detection in video/image captures
- */
+import * as tf from "@tensorflow/tfjs";
+import "@tensorflow/tfjs-backend-webgl";
+import * as cocoSsd from "@tensorflow-models/coco-ssd";
+
 export class DocumentDetectionService {
   private animationFrameId: number | null = null;
-  private detectionTimeout: number | null = null;
+  private detectionTimeoutId: number | null = null;
+  private model: cocoSsd.ObjectDetection | null = null;
+  private isDetecting = false;
+  private readonly DETECTION_INTERVAL_MS = 1000; // <--- delay between detections
 
-  /**
-   * Detects a document in the video feed
-   * This is a simulated detection for demo purposes
-   */
-  startDocumentDetection(
+  async loadModel() {
+    if (!this.model) {
+      console.log("[DocumentDetection] Initialisation du backend...");
+      await tf.setBackend("webgl");
+      await tf.ready();
+      console.log(
+        "[DocumentDetection] Backend prêt, chargement du modèle coco-ssd..."
+      );
+      this.model = await cocoSsd.load();
+      console.log("[DocumentDetection] Modèle chargé avec succès.");
+    }
+  }
+
+  async startDocumentDetection(
     videoElement: HTMLVideoElement | null,
     canvasElement: HTMLCanvasElement | null,
     onDocumentDetected: (imageDataUrl: string) => void
-  ): { stop: () => void } {
+  ): Promise<{ stop: () => void }> {
     this.stopDocumentDetection();
+    await this.loadModel();
 
-    const detectDocument = () => {
-      if (!videoElement || !canvasElement || !videoElement.videoWidth) {
-        this.animationFrameId = requestAnimationFrame(detectDocument);
+    const detect = async () => {
+      if (
+        !videoElement ||
+        !canvasElement ||
+        !this.model ||
+        !videoElement.videoWidth ||
+        this.isDetecting
+      ) {
+        this.scheduleNextDetection(detect);
         return;
       }
 
-      const video = videoElement;
-      const canvas = canvasElement;
-      const ctx = canvas.getContext("2d");
+      this.isDetecting = true;
+      console.log("[DocumentDetection] Lancement d'une nouvelle détection...");
 
-      if (!ctx) return;
+      try {
+        const predictions = await this.model.detect(videoElement);
+        console.log("[DocumentDetection] Prédictions :", predictions);
 
-      // Set canvas dimensions to match the video
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+        const documentLike = predictions.find(
+          (pred) =>
+            ["book", "cell phone", "tv", "laptop"].includes(pred.class) &&
+            pred.score > 0.6
+        );
 
-      // Draw the video frame onto the canvas
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        if (documentLike) {
+          console.log("[DocumentDetection] Document détecté :", documentLike);
+          const ctx = canvasElement.getContext("2d");
 
-      // Here you could implement a document detection algorithm
-      // For this demo, we're simulating detection after a random delay
-      if (this.detectionTimeout) {
-        clearTimeout(this.detectionTimeout);
+          if (ctx) {
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+            ctx.drawImage(
+              videoElement,
+              0,
+              0,
+              canvasElement.width,
+              canvasElement.height
+            );
+
+            ctx.strokeStyle = "#11E5C5";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(
+              documentLike.bbox[0],
+              documentLike.bbox[1],
+              documentLike.bbox[2],
+              documentLike.bbox[3]
+            );
+
+            const dataUrl = canvasElement.toDataURL("image/jpeg");
+            console.log(
+              "[DocumentDetection] Image capturée, appel du callback."
+            );
+            onDocumentDetected(dataUrl);
+          } else {
+            console.warn(
+              "[DocumentDetection] Contexte 2D du canvas non disponible."
+            );
+          }
+        } else {
+          console.log("[DocumentDetection] Aucun objet document-like détecté.");
+        }
+      } catch (err) {
+        console.error("[DocumentDetection] Erreur pendant la détection :", err);
       }
 
-      this.detectionTimeout = window.setTimeout(() => {
-        const dataUrl = canvas.toDataURL("image/jpeg");
-        onDocumentDetected(dataUrl);
-        this.stopDocumentDetection();
-      }, 2000 + Math.random() * 3000); // Between 2 and 5 seconds
-
-      this.animationFrameId = requestAnimationFrame(detectDocument);
+      this.isDetecting = false;
+      this.scheduleNextDetection(detect);
     };
 
-    detectDocument();
+    detect();
 
     return {
       stop: () => this.stopDocumentDetection(),
     };
   }
 
+  private scheduleNextDetection(callback: () => void) {
+    if (this.detectionTimeoutId) clearTimeout(this.detectionTimeoutId);
+    this.detectionTimeoutId = window.setTimeout(
+      callback,
+      this.DETECTION_INTERVAL_MS
+    );
+  }
+
   stopDocumentDetection() {
+    console.log("[DocumentDetection] Arrêt de la détection.");
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
     }
-
-    if (this.detectionTimeout) {
-      clearTimeout(this.detectionTimeout);
-      this.detectionTimeout = null;
+    if (this.detectionTimeoutId) {
+      clearTimeout(this.detectionTimeoutId);
+      this.detectionTimeoutId = null;
     }
   }
 }
 
-// Create a singleton instance
 export const documentDetectionService = new DocumentDetectionService();

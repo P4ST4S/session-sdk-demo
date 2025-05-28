@@ -1,7 +1,7 @@
 import type { CameraConstraints, CameraFacingMode } from "../types/camera";
 
 // Permit to enable development mode to test without a camera
-const DEV_MODE = import.meta.env.DEV;
+const DEV_MODE = false; //import.meta.env.DEV;
 // Default image path for development mode
 const DEFAULT_TEST_IMAGE = "/mock-id-card.jpeg";
 

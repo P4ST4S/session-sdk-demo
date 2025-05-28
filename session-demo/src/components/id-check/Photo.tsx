@@ -61,17 +61,32 @@ const Photo: React.FC<PhotoProps> = ({ onCapture }) => {
   useEffect(() => {
     if (!isDetecting) return;
 
-    const detectionHandler = documentDetectionService.startDocumentDetection(
-      videoRef.current,
-      canvasRef.current,
-      (imageDataUrl) => {
-        onCapture(imageDataUrl);
-        setIsDetecting(false);
-      }
-    );
+    let detectionHandlerRef: { stop: () => void } | null = null;
+
+    const startDetection = async () => {
+      const detectionHandler =
+        await documentDetectionService.startDocumentDetection(
+          videoRef.current,
+          canvasRef.current,
+          (imageDataUrl) => {
+            onCapture(imageDataUrl);
+            setIsDetecting(false);
+            // Stop the detection after capturing the image
+            if (detectionHandlerRef) {
+              detectionHandlerRef.stop();
+            }
+          }
+        );
+
+      detectionHandlerRef = detectionHandler;
+    };
+
+    startDetection();
 
     return () => {
-      detectionHandler.stop();
+      if (detectionHandlerRef) {
+        detectionHandlerRef.stop();
+      }
     };
   }, [isDetecting, onCapture]);
 
