@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "../ui/Button";
 import PoweredBy from "../ui/PoweredBy";
 import Title from "../ui/Title";
 import Subtitle from "../ui/Subtitle";
+import PhotoProcessingLoader from "./PhotoProcessingLoader";
 
 interface PhotoConfirmationProps {
   imageUrl: string;
@@ -15,6 +16,23 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
   onConfirm,
   onRetry,
 }) => {
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleConfirm = () => {
+    setIsProcessing(true);
+  };
+
+  const handleProcessingComplete = () => {
+    // Call the original onConfirm callback after processing is complete
+    // onConfirm();
+  };
+
+  if (isProcessing) {
+    return (
+      <PhotoProcessingLoader onProcessingComplete={handleProcessingComplete} />
+    );
+  }
+
   return (
     <div className="relative flex justify-content w-full px-4 pt-8 pb-[80px] overflow-hidden lg:flex-col">
       <div className="flex flex-col gap-5 mt-4 mx-auto w-full max-w-[322px]">
@@ -39,7 +57,7 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
       <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
         {/* Buttons for confirmation or retry */}
         <div className="flex flex-col gap-3 w-full mb-4">
-          <Button onClick={onConfirm} className="w-full">
+          <Button onClick={handleConfirm} className="w-full">
             Confirmer
           </Button>
           <button
