@@ -3,47 +3,37 @@ import Title from "../ui/Title";
 import Subtitle from "../ui/Subtitle";
 import Button from "../ui/Button";
 import PoweredBy from "../ui/PoweredBy";
+import type { ProcessingStep } from "../../types/session";
+import { DEFAULT_PROCESSING_STEPS } from "../../utils/stepsAnalysis";
 
 interface PhotoProcessingLoaderProps {
   onProcessingComplete: () => void;
+  steps?: ProcessingStep[];
 }
-
-const PROCESSING_STEPS = [
-  {
-    title: "Analyse du document",
-    subtitle: "Vérification de la validité du document",
-  },
-  {
-    title: "Extraction des données",
-    subtitle: "Extraction des informations du document",
-  },
-  {
-    title: "Vérification de l'identité",
-    subtitle: "Comparaison avec les données fournies",
-  },
-  {
-    title: "Finalisation",
-    subtitle: "Préparation des résultats",
-  },
-];
 
 const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
   onProcessingComplete,
+  steps = DEFAULT_PROCESSING_STEPS,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(true);
 
+  // Verify if no steps have hasError after analysis
+  const hasErrorInSteps = steps.some((step) => step.hasError);
+
   useEffect(() => {
-    const totalSteps = PROCESSING_STEPS.length;
+    const totalSteps = steps.length;
 
     // If we've completed all steps, call onProcessingComplete
     if (currentStep >= totalSteps) {
       setIsProcessing(false);
-      onProcessingComplete();
+      if (!hasErrorInSteps) {
+        onProcessingComplete();
+      }
       return;
     }
 
-    // Move to next step after 1 second
+    // Move to next step after 1.5 seconds
     const timer = setTimeout(() => {
       setCurrentStep((prev) => prev + 1);
     }, 1500);
@@ -63,15 +53,24 @@ const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
       <div className="flex flex-col items-start gap-6 w-full max-w-[400px] mx-auto mt-8">
         {/* Processing steps with status indicators */}
         <div className="w-full space-y-5 min-h-[250px]">
-          {PROCESSING_STEPS.slice(0, currentStep + 1).map((step, index) => (
+          {steps.slice(0, currentStep + 1).map((step, index: number) => (
             <div key={index} className="flex items-start">
               {/* Status indicator */}
               <div className="mr-4 mt-1">
                 {index < currentStep ? (
-                  <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#11E5C5] text-white">
-                    <span>✓</span>
-                  </div>
+                  step.hasError ? (
+                    // Error indicator - Red X
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white">
+                      <span>✕</span>
+                    </div>
+                  ) : (
+                    // Success indicator - Green checkmark
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#11E5C5] text-white">
+                      <span>✓</span>
+                    </div>
+                  )
                 ) : (
+                  // Loading spinner
                   <div className="w-6 h-6 rounded-full border-2 border-t-[#11E5C5] border-r-[#11E5C5] border-b-[#11E5C5] border-l-transparent animate-spin"></div>
                 )}
               </div>
@@ -86,9 +85,19 @@ const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
         </div>
       </div>
       <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
-        <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
-          {!isProcessing && <Button className="w-full">Continuer</Button>}
-        </div>
+        {!isProcessing && (
+          <div className="flex flex-col max-w-[345px] mx-auto py-4 sm:mb-4 gap-3">
+            {hasErrorInSteps && (
+              <button className="text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline">
+                Poursuivre tout de même
+              </button>
+            )}
+
+            <Button className="w-full">
+              {hasErrorInSteps ? "Soumettre à nouveau" : "Continuer"}
+            </Button>
+          </div>
+        )}
         <PoweredBy />
       </div>
     </div>

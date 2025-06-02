@@ -12,3 +12,9 @@ export type stepObject = {
   setStep: (step: number) => void;
   step: number;
 };
+
+export interface ProcessingStep {
+  title: string;
+  subtitle: string;
+  hasError?: boolean;
+}
