@@ -53,7 +53,7 @@ const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
       <div className="flex flex-col items-start gap-6 w-full max-w-[400px] mx-auto mt-8">
         {/* Processing steps with status indicators */}
         <div className="w-full space-y-5 min-h-[250px]">
-          {steps.slice(0, currentStep + 1).map((step, index: number) => (
+          {steps.map((step, index: number) => (
             <div key={index} className="flex items-start">
               {/* Status indicator */}
               <div className="mr-4 mt-1">
@@ -69,9 +69,12 @@ const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
                       <span>✓</span>
                     </div>
                   )
-                ) : (
-                  // Loading spinner
+                ) : index === currentStep ? (
+                  // Loading spinner only for the current step
                   <div className="w-6 h-6 rounded-full border-2 border-t-[#11E5C5] border-r-[#11E5C5] border-b-[#11E5C5] border-l-transparent animate-spin"></div>
+                ) : (
+                  // Empty circle for future steps
+                  <div className="w-6 h-6 rounded-full border-2 border-gray-300"></div>
                 )}
               </div>
 
