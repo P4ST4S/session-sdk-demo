@@ -14,7 +14,7 @@ const BeforePhoto = ({ setStep }: BeforePhotoProps) => {
   };
 
   return (
-    <div className="relative flex justify-content w-full px-4 pt-8 pb-[80px] overflow-hidden">
+    <div className="relative flex justify-content w-full px-4 pt-8 pb-[80px] overflow-hidden lg:flex-col">
       <div className="flex flex-col gap-5 mt-4 mx-auto w-full max-w-[322px]">
         <div className="flex flex-col sm:flex-col-reverse items-center mx-auto overflow-hidden">
           <div className="flex flex-col">

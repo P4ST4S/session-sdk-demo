@@ -16,7 +16,7 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
   onRetry,
 }) => {
   return (
-    <div className="relative flex justify-content w-full px-4 pt-8 pb-[80px] overflow-hidden">
+    <div className="relative flex justify-content w-full px-4 pt-8 pb-[80px] overflow-hidden lg:flex-col">
       <div className="flex flex-col gap-5 mt-4 mx-auto w-full max-w-[322px]">
         <div className="flex flex-col items-center mx-auto">
           <Title className="mb-5 sm:mb-2">Confirmation de la photo</Title>
@@ -26,8 +26,8 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
           </Subtitle>
         </div>
         {/* Display the captured image */}
-        <div className="w-full flex justify-center my-4">
-          <div className="relative overflow-hidden rounded-lg border-2 border-[#11E5C5]">
+        <div className="w-full flex justify-center my-4 lg:h-[30vh]">
+          <div className="relative overflow-hidden rounded-lg border-2 border-[#11E5C5] lg:flex lg:items-center lg:justify-center">
             <img
               src={imageUrl}
               alt="Document capturé"
