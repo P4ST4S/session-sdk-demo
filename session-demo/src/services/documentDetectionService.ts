@@ -11,14 +11,14 @@ export class DocumentDetectionService {
 
   async loadModel() {
     if (!this.model) {
-      console.log("[DocumentDetection] Initialisation du backend...");
+      console.log("[DocumentDetection] Initializing backend...");
       await tf.setBackend("webgl");
       await tf.ready();
       console.log(
-        "[DocumentDetection] Backend prêt, chargement du modèle coco-ssd..."
+        "[DocumentDetection] Backend ready, loading coco-ssd model..."
       );
       this.model = await cocoSsd.load();
-      console.log("[DocumentDetection] Modèle chargé avec succès.");
+      console.log("[DocumentDetection] Model loaded successfully.");
     }
   }
 
@@ -43,11 +43,11 @@ export class DocumentDetectionService {
       }
 
       this.isDetecting = true;
-      console.log("[DocumentDetection] Lancement d'une nouvelle détection...");
+      console.log("[DocumentDetection] Starting a new detection...");
 
       try {
         const predictions = await this.model.detect(videoElement);
-        console.log("[DocumentDetection] Prédictions :", predictions);
+        console.log("[DocumentDetection] Predictions:", predictions);
 
         const documentLike = predictions.find(
           (pred) =>
@@ -56,44 +56,45 @@ export class DocumentDetectionService {
         );
 
         if (documentLike) {
-          console.log("[DocumentDetection] Document détecté :", documentLike);
+          console.log("[DocumentDetection] Document detected:", documentLike);
           const ctx = canvasElement.getContext("2d");
 
           if (ctx) {
-            canvasElement.width = videoElement.videoWidth;
-            canvasElement.height = videoElement.videoHeight;
+            // Get the dimensions of the detected document
+            const [x, y, width, height] = documentLike.bbox;
+
+            // Set the canvas size to match the detected area
+            canvasElement.width = width;
+            canvasElement.height = height;
+
+            // Draw only the detected area on the canvas
             ctx.drawImage(
               videoElement,
+              x,
+              y,
+              width,
+              height, // Source rectangle (detected area)
               0,
               0,
-              canvasElement.width,
-              canvasElement.height
-            );
-
-            ctx.strokeStyle = "#11E5C5";
-            ctx.lineWidth = 4;
-            ctx.strokeRect(
-              documentLike.bbox[0],
-              documentLike.bbox[1],
-              documentLike.bbox[2],
-              documentLike.bbox[3]
+              width,
+              height // Destination rectangle (entire canvas)
             );
 
             const dataUrl = canvasElement.toDataURL("image/jpeg");
             console.log(
-              "[DocumentDetection] Image capturée, appel du callback."
+              "[DocumentDetection] Image captured, calling callback."
             );
             onDocumentDetected(dataUrl);
           } else {
             console.warn(
-              "[DocumentDetection] Contexte 2D du canvas non disponible."
+              "[DocumentDetection] Canvas 2D context not available."
             );
           }
         } else {
-          console.log("[DocumentDetection] Aucun objet document-like détecté.");
+          console.log("[DocumentDetection] No document-like object detected.");
         }
       } catch (err) {
-        console.error("[DocumentDetection] Erreur pendant la détection :", err);
+        console.error("[DocumentDetection] Error during detection:", err);
       }
 
       this.isDetecting = false;
@@ -116,7 +117,7 @@ export class DocumentDetectionService {
   }
 
   stopDocumentDetection() {
-    console.log("[DocumentDetection] Arrêt de la détection.");
+    console.log("[DocumentDetection] Stopping detection.");
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;
