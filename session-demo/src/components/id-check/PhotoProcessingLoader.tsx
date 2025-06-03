@@ -8,11 +8,13 @@ import { DEFAULT_PROCESSING_STEPS } from "../../utils/stepsAnalysis";
 
 interface PhotoProcessingLoaderProps {
   onProcessingComplete: () => void;
+  onRetry?: () => void;
   steps?: ProcessingStep[];
 }
 
 const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
   onProcessingComplete,
+  onRetry,
   steps = DEFAULT_PROCESSING_STEPS,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -96,7 +98,10 @@ const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
               </button>
             )}
 
-            <Button className="w-full">
+            <Button
+              onClick={hasErrorInSteps ? onRetry : onProcessingComplete}
+              className="w-full"
+            >
               {hasErrorInSteps ? "Soumettre à nouveau" : "Continuer"}
             </Button>
           </div>

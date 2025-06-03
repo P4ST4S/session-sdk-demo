@@ -4,7 +4,6 @@ import UserInputForm from "./session/UserInputForm";
 import type { DatakeenSessionProps } from "../types/session";
 import type { stepObject } from "../types/session";
 import Paper from "./ui/Paper";
-import { FileUpload } from "./session/FileUpload";
 import StartSession from "./session/StartSession";
 import type { UserInput } from "../types/userInput";
 import ChooseCountryJDI from "./session/ChooseCountryJDI";

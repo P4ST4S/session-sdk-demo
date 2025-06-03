@@ -107,7 +107,11 @@ const ChooseCountryJDI = ({
 
       <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
         <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
-          <Button onClick={goOnNextStep} className="w-full">
+          <Button
+            onClick={goOnNextStep}
+            className="w-full"
+            disabled={!selectedCountry || !selectedDocumentType}
+          >
             Commencer ma vérification
           </Button>
         </div>

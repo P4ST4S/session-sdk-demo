@@ -9,12 +9,14 @@ interface PhotoConfirmationProps {
   imageUrl: string;
   onConfirm: () => void;
   onRetry: () => void;
+  onRetryAfterProcessing: () => void;
 }
 
 const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
   imageUrl,
   onConfirm,
   onRetry,
+  onRetryAfterProcessing,
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -24,12 +26,19 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
 
   const handleProcessingComplete = () => {
     // Call the original onConfirm callback after processing is complete
-    // onConfirm();
+    onConfirm();
+  };
+
+  const handleRetryAfterProcessing = () => {
+    onRetryAfterProcessing();
   };
 
   if (isProcessing) {
     return (
-      <PhotoProcessingLoader onProcessingComplete={handleProcessingComplete} />
+      <PhotoProcessingLoader
+        onProcessingComplete={handleProcessingComplete}
+        onRetry={handleRetryAfterProcessing}
+      />
     );
   }
 

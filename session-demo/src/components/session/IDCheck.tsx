@@ -23,12 +23,17 @@ const IDCheck = ({ stepObject }: IDCheckProps) => {
     // Here you can handle the confirmed image, e.g., send it to a server or process it
 
     // Move to the next step in the workflow
-    stepObject.setStep(stepObject.step + 1);
+    // stepObject.setStep(stepObject.step + 1);
   };
 
   const handleRetry = () => {
     setCapturedImage(null);
     setInternalStep(1); // Go back to camera step
+  };
+
+  const handleRetryAfterProcessing = () => {
+    setCapturedImage(null);
+    stepObject.setStep(1); // Go back to the user input step
   };
 
   return (
@@ -40,6 +45,7 @@ const IDCheck = ({ stepObject }: IDCheckProps) => {
           imageUrl={capturedImage}
           onConfirm={handleConfirm}
           onRetry={handleRetry}
+          onRetryAfterProcessing={handleRetryAfterProcessing}
         />
       )}
     </>
