@@ -75,6 +75,8 @@ const Photo: React.FC<PhotoProps> = ({ onCapture }) => {
             if (detectionHandlerRef) {
               detectionHandlerRef.stop();
             }
+            // Stop the camera
+            cameraService.stopCamera();
           }
         );
 
