@@ -1,6 +1,9 @@
 /**
  * @file ChooseCountryJDI.tsx
- * @description This component provides a UI for users to select their document's issuing country
+ * @description This component provides a UI for users to se            <Title className="mb-5 sm:mb-2">Document issuing country</Title>
+            <Subtitle>
+              Select the issuing country shown on your ID document, as well as the type of document you want to use
+            </Subtitle>their document's issuing country
  * and document type for identity verification.
  *
  * @component ChooseCountryJDI
@@ -62,7 +65,7 @@ const ChooseCountryJDI = ({
     null
   );
 
-  // Utiliser le contexte global au lieu de l'état local pour le type de document
+  // Use global context instead of local state for document type
   const { selectedDocumentType, setSelectedDocumentType } =
     useDocumentContext();
 
@@ -76,10 +79,10 @@ const ChooseCountryJDI = ({
     setStep(3);
     setCountry(selectedCountry?.id || null);
 
-    // Assurez-vous que le document est correctement défini dans le contexte et dans les props
+    // Make sure the document is correctly defined in both context and props
     setDocumentType(selectedDocumentType?.id || null);
 
-    // Log pour débogage
+    // Debug log
     console.log("Going to next step with document context:", {
       id: selectedDocumentType?.id,
       label: selectedDocumentType?.label,
@@ -102,25 +105,25 @@ const ChooseCountryJDI = ({
 
         <div className="flex flex-col sm:flex-row items-center">
           <SelectDrawer
-            title="Pays émetteur"
+            title="Issuing country"
             items={countries}
             selectedItem={selectedCountry}
             onChange={setSelectedCountry}
-            errorMessage="Aucun pays trouvé"
+            errorMessage="No country found"
           />
         </div>
 
         {selectedCountry && (
           <div className="flex flex-col sm:flex-row items-center mt-[-30px]">
             <SelectDrawer
-              title="Type de document"
+              title="Document type"
               items={documentTypesFromCountryId(selectedCountry.id)}
               selectedItem={selectedDocumentType}
               onChange={(docType) => {
                 setSelectedDocumentType(docType);
                 console.log("Selected document type with properties:", docType);
               }}
-              errorMessage="Aucun type de document trouvé"
+              errorMessage="No document type found"
             />
           </div>
         )}
@@ -133,7 +136,7 @@ const ChooseCountryJDI = ({
             className="w-full"
             disabled={!selectedCountry || !selectedDocumentType}
           >
-            Commencer ma vérification
+            Start my verification
           </Button>
         </div>
         <PoweredBy />

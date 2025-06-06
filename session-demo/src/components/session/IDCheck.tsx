@@ -22,7 +22,7 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
   );
   const [requiresTwoSides, setRequiresTwoSides] = useState(false);
 
-  // Utiliser le contexte pour obtenir le document sélectionné
+  // Use the context to get the selected document
   const { selectedDocumentType } = useDocumentContext();
 
   // Monitor step changes to ensure the camera is stopped
@@ -37,7 +37,7 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
   // Determine if the document needs two sides based on the selected document type
   useEffect(() => {
     if (selectedDocumentType) {
-      // Utiliser directement la propriété hasTwoSides du document sélectionné
+      // Directly use the hasTwoSides property from the selected document
       setRequiresTwoSides(!!selectedDocumentType.hasTwoSides);
       console.log(
         "Document context: using hasTwoSides from selectedDocumentType:",
@@ -48,7 +48,7 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
         }
       );
     } else if (documentTypeId) {
-      // Fallback si le contexte n'est pas disponible
+      // Fallback if context is not available
       console.log(
         "Document context not available, using fallback with documentTypeId:",
         documentTypeId
@@ -87,10 +87,10 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
   };
 
   const handleConfirm = () => {
-    // Prépare les images à envoyer en fonction du type de document
+    // Prepare images to send based on document type
     const imagesToSend = {
       recto: capturedRectoImage,
-      // N'inclut le verso que si le document a deux faces et que l'image a été capturée
+      // Only include verso if the document has two sides and the image has been captured
       ...(requiresTwoSides && capturedVersoImage
         ? { verso: capturedVersoImage }
         : {}),
