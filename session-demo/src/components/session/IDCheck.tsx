@@ -4,9 +4,8 @@ import BeforePhoto from "../id-check/BeforePhoto";
 import BeforeVersoPhoto from "../id-check/BeforeVersoPhoto";
 import Photo from "../id-check/Photo";
 import PhotoConfirmation from "../id-check/PhotoConfirmation";
-import { JDIDocumentType as FrenchJDI } from "../../utils/chooseDocuments/frenchDocumentTypes";
-import { JDIDocumentType as SpanishJDI } from "../../utils/chooseDocuments/spanishDocumentTypes";
 import { cameraService } from "../../services/cameraService";
+import { useDocumentContext } from "../../context/DocumentContext";
 
 interface IDCheckProps {
   stepObject: stepObject;
@@ -23,6 +22,9 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
   );
   const [requiresTwoSides, setRequiresTwoSides] = useState(false);
 
+  // Utiliser le contexte pour obtenir le document sélectionné
+  const { selectedDocumentType } = useDocumentContext();
+
   // Monitor step changes to ensure the camera is stopped
   useEffect(() => {
     // Stop the camera during step transitions
@@ -32,32 +34,49 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
     }
   }, [internalStep]);
 
-  // Determine if the document needs two sides based on the document type ID
+  // Determine if the document needs two sides based on the selected document type
   useEffect(() => {
-    if (!documentTypeId) return;
-
-    // Search in both French and Spanish document types
-    const allDocumentTypes = [...FrenchJDI, ...SpanishJDI];
-    const selectedDocType = allDocumentTypes.find(
-      (doc) => doc.id === documentTypeId
-    );
-
-    if (selectedDocType) {
-      setRequiresTwoSides(selectedDocType.hasTwoSides || false);
-    } else {
-      // Fallback logic: assume all documents except passports (jdi-3) require two sides
+    if (selectedDocumentType) {
+      // Utiliser directement la propriété hasTwoSides du document sélectionné
+      setRequiresTwoSides(!!selectedDocumentType.hasTwoSides);
+      console.log(
+        "Document context: using hasTwoSides from selectedDocumentType:",
+        {
+          id: selectedDocumentType.id,
+          label: selectedDocumentType.label,
+          hasTwoSides: selectedDocumentType.hasTwoSides,
+        }
+      );
+    } else if (documentTypeId) {
+      // Fallback si le contexte n'est pas disponible
+      console.log(
+        "Document context not available, using fallback with documentTypeId:",
+        documentTypeId
+      );
       setRequiresTwoSides(documentTypeId !== "jdi-3");
+    } else {
+      console.log(
+        "No document information available in either context or props"
+      );
     }
-  }, [documentTypeId]);
+  }, [selectedDocumentType, documentTypeId]);
   const onCaptureRecto = (image: string) => {
     console.log("Captured recto image:", image);
     setCapturedRectoImage(image);
+    console.log(
+      "Requires two sides:",
+      requiresTwoSides,
+      "from document:",
+      selectedDocumentType?.label
+    );
 
-    // If the document requires two sides, show the "turn document" screen
+    // Routing logic based on whether the document requires two sides
     if (requiresTwoSides) {
+      // If two sides are required, go to the instruction screen for verso capture
       setInternalStep(2); // Go to the "turn document" screen
     } else {
-      setInternalStep(4); // Skip directly to confirmation for single-sided documents
+      // For single-sided documents (like passports), skip verso capture
+      setInternalStep(4); // Skip directly to confirmation
     }
   };
 
@@ -68,10 +87,16 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
   };
 
   const handleConfirm = () => {
-    console.log("Images confirmed:", {
+    // Prépare les images à envoyer en fonction du type de document
+    const imagesToSend = {
       recto: capturedRectoImage,
-      verso: capturedVersoImage,
-    });
+      // N'inclut le verso que si le document a deux faces et que l'image a été capturée
+      ...(requiresTwoSides && capturedVersoImage
+        ? { verso: capturedVersoImage }
+        : {}),
+    };
+
+    console.log("Images confirmed:", imagesToSend);
 
     // Make sure the camera is properly stopped
     cameraService.stopCamera();
@@ -109,11 +134,15 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
       {/* Step 1: Capture of the front photo */}
       {internalStep === 1 && <Photo onCapture={onCaptureRecto} />}
 
-      {/* Step 2: Instructions before the second photo (back) */}
-      {internalStep === 2 && <BeforeVersoPhoto setStep={setInternalStep} />}
+      {/* Step 2: Instructions before the second photo (back) - only shown if document has two sides */}
+      {internalStep === 2 && requiresTwoSides && (
+        <BeforeVersoPhoto setStep={setInternalStep} />
+      )}
 
-      {/* Step 3: Capture of the back photo */}
-      {internalStep === 3 && <Photo onCapture={onCaptureVerso} />}
+      {/* Step 3: Capture of the back photo - only shown if document has two sides */}
+      {internalStep === 3 && requiresTwoSides && (
+        <Photo onCapture={onCaptureVerso} />
+      )}
 
       {/* Step 4: Photo confirmation */}
       {internalStep === 4 && (

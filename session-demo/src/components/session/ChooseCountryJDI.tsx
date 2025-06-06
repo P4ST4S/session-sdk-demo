@@ -43,8 +43,9 @@ import Subtitle from "../ui/Subtitle";
 import Title from "../ui/Title";
 import { countries, documentTypesFromCountryId } from "../../utils/jdiCountry";
 import type { DrawerItem } from "../../utils/jdiCountry";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SelectDrawer } from "../ui/SelectDrawer";
+import { useDocumentContext } from "../../context/DocumentContext";
 
 interface ChooseCountryJDIProps {
   setStep: (nbr: number) => void;
@@ -60,13 +61,30 @@ const ChooseCountryJDI = ({
   const [selectedCountry, setSelectedCountry] = useState<DrawerItem | null>(
     null
   );
-  const [selectedDocumentType, setSelectedDocumentType] =
-    useState<DrawerItem | null>(null);
+
+  // Utiliser le contexte global au lieu de l'état local pour le type de document
+  const { selectedDocumentType, setSelectedDocumentType } =
+    useDocumentContext();
+
+  // Log what is currently selected
+  useEffect(() => {
+    console.log("Selected country:", selectedCountry);
+    console.log("Selected document type from context:", selectedDocumentType);
+  }, [selectedCountry, selectedDocumentType]);
 
   const goOnNextStep = () => {
     setStep(3);
     setCountry(selectedCountry?.id || null);
+
+    // Assurez-vous que le document est correctement défini dans le contexte et dans les props
     setDocumentType(selectedDocumentType?.id || null);
+
+    // Log pour débogage
+    console.log("Going to next step with document context:", {
+      id: selectedDocumentType?.id,
+      label: selectedDocumentType?.label,
+      hasTwoSides: selectedDocumentType?.hasTwoSides,
+    });
   };
 
   return (
@@ -98,7 +116,10 @@ const ChooseCountryJDI = ({
               title="Type de document"
               items={documentTypesFromCountryId(selectedCountry.id)}
               selectedItem={selectedDocumentType}
-              onChange={setSelectedDocumentType}
+              onChange={(docType) => {
+                setSelectedDocumentType(docType);
+                console.log("Selected document type with properties:", docType);
+              }}
               errorMessage="Aucun type de document trouvé"
             />
           </div>

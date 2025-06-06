@@ -8,6 +8,7 @@ import StartSession from "./session/StartSession";
 import type { UserInput } from "../types/userInput";
 import ChooseCountryJDI from "./session/ChooseCountryJDI";
 import IDCheck from "./session/IDCheck";
+import { DocumentProvider } from "../context/DocumentContext";
 
 /**
  * DatakeenSession Component
@@ -63,20 +64,24 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
   }, [country, documentType]);
 
   return (
-    <Paper className="w-full h-screen lg:w-[600px] lg:h-[600px] background-white rounded-lg overflow-auto sm:pt-4 sm:pb-4 z-10">
-      {step === 0 && <StartSession stepObject={stepObject} />}
-      {step === 1 && (
-        <UserInputForm stepObject={stepObject} setUserInput={setUserInput} />
-      )}
-      {step === 2 && (
-        <ChooseCountryJDI
-          setStep={setStep}
-          setCountry={setCountry}
-          setDocumentType={setDocumentType}
-        />
-      )}
-      {step === 3 && <IDCheck stepObject={stepObject} />}
-    </Paper>
+    <DocumentProvider>
+      <Paper className="w-full h-screen lg:w-[600px] lg:h-[600px] background-white rounded-lg overflow-auto sm:pt-4 sm:pb-4 z-10">
+        {step === 0 && <StartSession stepObject={stepObject} />}
+        {step === 1 && (
+          <UserInputForm stepObject={stepObject} setUserInput={setUserInput} />
+        )}
+        {step === 2 && (
+          <ChooseCountryJDI
+            setStep={setStep}
+            setCountry={setCountry}
+            setDocumentType={setDocumentType}
+          />
+        )}
+        {step === 3 && (
+          <IDCheck stepObject={stepObject} documentTypeId={documentType} />
+        )}
+      </Paper>
+    </DocumentProvider>
   );
 };
 
