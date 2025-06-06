@@ -61,7 +61,7 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
           </Subtitle>
         </div>
         {/* Display the captured image(s) */}
-        <div className="w-full flex flex-col gap-4 my-4">
+        <div className="w-full flex flex-col gap-4 my-4 mt-8">
           {/* Recto image */}
           <div className="w-full">
             <div className="flex flex-col">
