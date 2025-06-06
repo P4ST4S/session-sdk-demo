@@ -64,28 +64,52 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
         <div className="w-full flex flex-col gap-4 my-4">
           {/* Recto image */}
           <div className="w-full">
-            {requiresTwoSides && (
-              <p className="text-center mb-2 font-medium">Recto</p>
-            )}
-            <div className="relative overflow-hidden rounded-lg border-2 border-[#11E5C5] lg:flex lg:items-center lg:justify-center">
-              <img
-                src={imageUrl}
-                alt="Document recto"
-                className="w-full object-contain"
-              />
+            <div className="flex flex-col">
+              <div
+                className="self-start bg-[#11E5C5] text-white py-1 px-4 z-10 text-sm font-medium shadow-md border-4 border-b-0 border-[#11E5C5] mb-[-3px]"
+                style={{
+                  borderTopLeftRadius: "0.375rem",
+                  borderTopRightRadius: "0.375rem",
+                }}
+              >
+                Recto
+              </div>
+              <div
+                className="overflow-hidden border-3 border-[#11E5C5] lg:flex lg:items-center lg:justify-center"
+                style={{ borderRadius: "0.5rem", borderTopLeftRadius: "0" }}
+              >
+                <img
+                  src={imageUrl}
+                  alt="Document recto"
+                  className="w-full object-contain"
+                />
+              </div>
             </div>
           </div>
 
           {/* Verso image - only show if in two-sided mode and we have a verso image */}
           {requiresTwoSides && versoImageUrl && (
             <div className="w-full">
-              <p className="text-center mb-2 font-medium">Verso</p>
-              <div className="relative overflow-hidden rounded-lg border-2 border-[#11E5C5] lg:flex lg:items-center lg:justify-center">
-                <img
-                  src={versoImageUrl}
-                  alt="Document verso"
-                  className="w-full object-contain"
-                />
+              <div className="flex flex-col">
+                <div
+                  className="self-start bg-[#11E5C5] text-white py-1 px-4 z-10 text-sm font-medium shadow-md border-4 border-b-0 border-[#11E5C5] mb-[-3px]"
+                  style={{
+                    borderTopLeftRadius: "0.375rem",
+                    borderTopRightRadius: "0.375rem",
+                  }}
+                >
+                  Verso
+                </div>
+                <div
+                  className="overflow-hidden border-3 border-[#11E5C5] lg:flex lg:items-center lg:justify-center"
+                  style={{ borderRadius: "0.5rem", borderTopLeftRadius: "0" }}
+                >
+                  <img
+                    src={versoImageUrl}
+                    alt="Document verso"
+                    className="w-full object-contain"
+                  />
+                </div>
               </div>
             </div>
           )}
