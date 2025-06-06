@@ -4,6 +4,7 @@ import { JDIDocumentType as SpanishJDI } from "./chooseDocuments/spanishDocument
 export type DrawerItem = {
   id: string;
   label: string;
+  hasTwoSides?: boolean;
 };
 
 export const countries = [

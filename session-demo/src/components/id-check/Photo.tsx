@@ -53,8 +53,12 @@ const Photo: React.FC<PhotoProps> = ({ onCapture }) => {
 
     // Cleanup function to stop the camera when the component unmounts
     return () => {
+      console.log("Photo component unmounting - stopping camera");
       cameraService.stopCamera();
       setIsDetecting(false);
+
+      // Make sure to stop any ongoing detection
+      documentDetectionService.stopDocumentDetection();
     };
   }, [isPortrait, facingMode]);
 
@@ -69,14 +73,19 @@ const Photo: React.FC<PhotoProps> = ({ onCapture }) => {
           videoRef.current,
           canvasRef.current,
           (imageDataUrl) => {
-            onCapture(imageDataUrl);
+            // Stop the detection and camera BEFORE calling onCapture
             setIsDetecting(false);
+
             // Stop the detection after capturing the image
             if (detectionHandlerRef) {
               detectionHandlerRef.stop();
             }
-            // Stop the camera
+
+            // Make sure to stop the camera to turn off the camera LED
             cameraService.stopCamera();
+
+            // Only then call onCapture to proceed to next step
+            onCapture(imageDataUrl);
           }
         );
 

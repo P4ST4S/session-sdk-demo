@@ -7,6 +7,8 @@ import PhotoProcessingLoader from "./PhotoProcessingLoader";
 
 interface PhotoConfirmationProps {
   imageUrl: string;
+  versoImageUrl?: string;
+  requiresTwoSides?: boolean;
   onConfirm: () => void;
   onRetry: () => void;
   onRetryAfterProcessing: () => void;
@@ -14,6 +16,8 @@ interface PhotoConfirmationProps {
 
 const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
   imageUrl,
+  versoImageUrl = "",
+  requiresTwoSides = false,
   onConfirm,
   onRetry,
   onRetryAfterProcessing,
@@ -43,27 +47,51 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
   }
 
   return (
-    <div className="relative flex justify-content w-full px-4 pt-8 pb-[80px] overflow-hidden lg:flex-col">
-      <div className="flex flex-col gap-5 mt-4 mx-auto w-full max-w-[322px]">
+    <div className="relative flex justify-center w-full px-4 pt-8 pb-[140px] overflow-y-auto lg:flex-col">
+      <div className="flex flex-col mt-4 mx-auto w-full max-w-[322px]">
         <div className="flex flex-col items-center mx-auto">
-          <Title className="mb-5 sm:mb-2">Confirmation de la photo</Title>
+          <Title className="mb-5 sm:mb-2">
+            {requiresTwoSides
+              ? "Confirmation des photos"
+              : "Confirmation de la photo"}
+          </Title>
           <Subtitle>
             Vérifiez que votre document est bien visible et lisible avant de
             continuer
           </Subtitle>
         </div>
-        {/* Display the captured image */}
-        <div className="w-full flex justify-center my-4 lg:h-[30vh]">
-          <div className="relative overflow-hidden rounded-lg border-2 border-[#11E5C5] lg:flex lg:items-center lg:justify-center">
-            <img
-              src={imageUrl}
-              alt="Document capturé"
-              className="w-full object-contain"
-            />
+        {/* Display the captured image(s) */}
+        <div className="w-full flex flex-col gap-4 my-4">
+          {/* Recto image */}
+          <div className="w-full">
+            {requiresTwoSides && (
+              <p className="text-center mb-2 font-medium">Recto</p>
+            )}
+            <div className="relative overflow-hidden rounded-lg border-2 border-[#11E5C5] lg:flex lg:items-center lg:justify-center">
+              <img
+                src={imageUrl}
+                alt="Document recto"
+                className="w-full object-contain"
+              />
+            </div>
           </div>
+
+          {/* Verso image - only show if in two-sided mode and we have a verso image */}
+          {requiresTwoSides && versoImageUrl && (
+            <div className="w-full">
+              <p className="text-center mb-2 font-medium">Verso</p>
+              <div className="relative overflow-hidden rounded-lg border-2 border-[#11E5C5] lg:flex lg:items-center lg:justify-center">
+                <img
+                  src={versoImageUrl}
+                  alt="Document verso"
+                  className="w-full object-contain"
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
-      <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
+      <div className="fixed bottom-0 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] pt-4 bg-white">
         {/* Buttons for confirmation or retry */}
         <div className="flex flex-col gap-3 w-full mb-4">
           <Button onClick={handleConfirm} className="w-full">
@@ -76,7 +104,9 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
             Reprendre la photo
           </button>
         </div>
-        <PoweredBy />
+        <div className="pb-4">
+          <PoweredBy />
+        </div>
       </div>
     </div>
   );

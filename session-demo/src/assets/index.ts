@@ -1,3 +1,4 @@
-import BeforePhotoIcon from "./before-photo.png";
+import beforePhotoIcon from "./before-photo.png";
+import beforeVersoIcon from "./before-verso.png";
 
-export { BeforePhotoIcon };
+export { beforePhotoIcon, beforeVersoIcon };

@@ -1,16 +1,16 @@
-import { beforePhotoIcon } from "../../assets";
+import { beforeVersoIcon } from "../../assets";
 import Button from "../ui/Button";
 import PoweredBy from "../ui/PoweredBy";
 import Subtitle from "../ui/Subtitle";
 import Title from "../ui/Title";
 
-interface BeforePhotoProps {
+interface BeforeVersoPhotoProps {
   setStep: (step: number) => void;
 }
 
-const BeforePhoto = ({ setStep }: BeforePhotoProps) => {
+const BeforeVersoPhoto = ({ setStep }: BeforeVersoPhotoProps) => {
   const goOnNextStep = () => {
-    setStep(1);
+    setStep(3); // Go to photo capture again, for the verso
   };
 
   return (
@@ -18,18 +18,16 @@ const BeforePhoto = ({ setStep }: BeforePhotoProps) => {
       <div className="flex flex-col gap-5 mt-4 mx-auto w-full max-w-[322px]">
         <div className="flex flex-col sm:flex-col-reverse items-center mx-auto overflow-hidden">
           <div className="flex flex-col">
-            <Title className="mb-5 sm:mb-2">
-              Tenez le recto de votre document
-            </Title>
+            <Title className="mb-5 sm:mb-2">Retournez votre document</Title>
             <Subtitle>
-              Afin de vérifier votre pièce d’identité, nous allons vous demander
-              tenir votre document puis de l’incliner face à la caméra
+              Maintenant, nous avons besoin de l'autre face de votre document.
+              Retournez-le et tenez-le face à la caméra.
             </Subtitle>
           </div>
         </div>
         <img
-          src={beforePhotoIcon}
-          alt="Avant de prendre la photo"
+          src={beforeVersoIcon}
+          alt="Avant de prendre la photo du verso"
           className="max-h-[60vh] w-auto object-contain ml-[-20px]"
         />
       </div>
@@ -45,4 +43,4 @@ const BeforePhoto = ({ setStep }: BeforePhotoProps) => {
   );
 };
 
-export default BeforePhoto;
+export default BeforeVersoPhoto;

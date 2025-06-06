@@ -1,8 +1,8 @@
 export const JDIDocumentType = [
-  { id: "jdi-2", label: "Carte d'identité" },
-  { id: "jdi-3", label: "Passeport biométrique" },
-  { id: "jdi-4", label: "Titre de séjour" },
-  { id: "jdi-5", label: "Permis de conduire" },
+  { id: "jdi-2", label: "Carte d'identité", hasTwoSides: true },
+  { id: "jdi-3", label: "Passeport biométrique", hasTwoSides: false },
+  { id: "jdi-4", label: "Titre de séjour", hasTwoSides: true },
+  { id: "jdi-5", label: "Permis de conduire", hasTwoSides: true },
 ];
 
 export const JDDDocumentType = [
