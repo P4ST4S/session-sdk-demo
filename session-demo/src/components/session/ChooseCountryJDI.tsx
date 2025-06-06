@@ -105,25 +105,25 @@ const ChooseCountryJDI = ({
 
         <div className="flex flex-col sm:flex-row items-center">
           <SelectDrawer
-            title="Issuing country"
+            title="Pays émetteur"
             items={countries}
             selectedItem={selectedCountry}
             onChange={setSelectedCountry}
-            errorMessage="No country found"
+            errorMessage="Aucun pays trouvé"
           />
         </div>
 
         {selectedCountry && (
           <div className="flex flex-col sm:flex-row items-center mt-[-30px]">
             <SelectDrawer
-              title="Document type"
+              title="Type du document"
               items={documentTypesFromCountryId(selectedCountry.id)}
               selectedItem={selectedDocumentType}
               onChange={(docType) => {
                 setSelectedDocumentType(docType);
                 console.log("Selected document type with properties:", docType);
               }}
-              errorMessage="No document type found"
+              errorMessage="Aucun type de document trouvé"
             />
           </div>
         )}

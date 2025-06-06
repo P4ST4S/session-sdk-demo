@@ -8,7 +8,6 @@ interface CameraMaskProps {
 }
 
 const CameraMask: React.FC<CameraMaskProps> = ({
-  isDetecting,
   isPortrait = false,
   facingMode = "environment",
 }) => {
@@ -16,20 +15,16 @@ const CameraMask: React.FC<CameraMaskProps> = ({
     <div className="absolute inset-0 z-10 flex items-center justify-center">
       <div
         className={`
-          border-4 border-white border-dashed rounded-lg
-          flex items-center justify-center
-          ${
-            isPortrait ? "w-6/7 h-1/4 aspect-[3/2]" : "w-1/2 h-2/3 aspect-[3/4]"
-          }
+          relative
+          ${isPortrait ? "w-4/5 aspect-[3/2]" : "w-3/5 aspect-[3/2]"}
           ${facingMode === "user" ? "transform scale-x-[-1]" : ""}
         `}
-      >
-        <p className="text-white text-center bg-black bg-opacity-50 p-2 rounded">
-          {isDetecting
-            ? "Placez votre document d'identité dans le cadre"
-            : "Détection en cours..."}
-        </p>
-      </div>
+        style={{
+          boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.75)",
+          border: "3px solid white",
+          borderRadius: "8px",
+        }}
+      ></div>
     </div>
   );
 };
