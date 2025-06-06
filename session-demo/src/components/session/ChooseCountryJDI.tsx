@@ -136,7 +136,7 @@ const ChooseCountryJDI = ({
             className="w-full"
             disabled={!selectedCountry || !selectedDocumentType}
           >
-            Start my verification
+            Commencer ma vérification
           </Button>
         </div>
         <PoweredBy />
