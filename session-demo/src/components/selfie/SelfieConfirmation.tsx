@@ -179,7 +179,7 @@ const SelfieConfirmation = ({
             onClick={onRetake}
             className="text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline"
           >
-            Reprendre la photo
+            Reprendre le selfie
           </button>
         </div>
         <div className="pb-4">
