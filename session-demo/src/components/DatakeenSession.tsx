@@ -9,6 +9,7 @@ import type { UserInput } from "../types/userInput";
 import ChooseCountryJDI from "./session/ChooseCountryJDI";
 import IDCheck from "./session/IDCheck";
 import { DocumentProvider } from "../context/DocumentContext";
+import Selfie from "./session/Selfie";
 
 /**
  * DatakeenSession Component
@@ -80,6 +81,7 @@ const DatakeenSession = ({ sessionId }: DatakeenSessionProps) => {
         {step === 3 && (
           <IDCheck stepObject={stepObject} documentTypeId={documentType} />
         )}
+        {step === 4 && <Selfie stepObject={stepObject} />}
       </Paper>
     </DocumentProvider>
   );

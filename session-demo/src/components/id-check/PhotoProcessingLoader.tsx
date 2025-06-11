@@ -93,7 +93,10 @@ const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
         {!isProcessing && (
           <div className="flex flex-col max-w-[345px] mx-auto py-4 sm:mb-4 gap-3">
             {hasErrorInSteps && (
-              <button className="text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline">
+              <button
+                className="text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline"
+                onClick={onProcessingComplete}
+              >
                 Poursuivre tout de même
               </button>
             )}

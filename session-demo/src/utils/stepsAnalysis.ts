@@ -24,7 +24,7 @@ export const DEFAULT_PROCESSING_STEPS: ProcessingStep[] = [
   {
     title: "Extraction des données",
     subtitle: "Extraction des informations du document",
-    hasError: true,
+    // hasError: true,
   },
   {
     title: "Vérification de l'identité",

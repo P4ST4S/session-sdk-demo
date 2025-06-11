@@ -1,5 +1,30 @@
 @import "tailwindcss";
 
+:root {
+  --uni-primary-color: #11e5c5;
+  --uni-secondary-color: #0a9983;
+  --uni-primary-color-lighter: #41f6db;
+  --uni-secondary-color-lighter: #1cbeaa;
+  --uni-alt-color: #086e5f;
+  --uni-alt-color-lighter: #0d9485;
+  --uni-light-color-variant-1: #d0f7f2;
+  --uni-light-color-variant-2: #b2ece5;
+  --uni-light-color: #fff;
+  --uni-dark-color: #202020;
+  --uni-error-color: #f44336;
+
+  --uni-btn-padding: 10px 15px;
+  --uni-btn-border: solid 0px;
+  --uni-btn-border-radius: 12px;
+  --uni-btn-font-size: 16px;
+  --uni-btn-text-transform: normal;
+  --uni-btn-border-outlined: solid 1px;
+  --uni-btn-label-margin: 10px 0px;
+  --uni-btn-disabled-bg-color: #eee;
+
+  --uni-card-bg-color: rgba(51, 51, 51, 0.05);
+}
+
 html {
   height: -webkit-fill-available;
 }

@@ -18,6 +18,7 @@
     "@tensorflow-models/coco-ssd": "^2.2.3",
     "@tensorflow/tfjs": "^4.22.0",
     "@tensorflow/tfjs-backend-webgl": "^4.22.0",
+    "@unissey-web/sdk-react": "^4.4.0",
     "clsx": "^2.1.1",
     "datakeen-session-react": "1.0.8",
     "lucide-react": "^0.511.0",
