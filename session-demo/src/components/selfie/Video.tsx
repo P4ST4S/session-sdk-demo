@@ -1,16 +1,6 @@
-import { SelfieCapture, FR, AcquisitionPreset } from "@unissey-web/sdk-react";
 import type { SelfieCaptureData } from "../../types/selfie";
-
-const customFR = {
-  ...FR.selfieCapture,
-  title: "Capturez votre selfie",
-  recordBtnLabel: "Prendre le selfie",
-  recorder: {
-    ...FR.selfieCapture.recorder,
-    capture: "Capturez votre selfie",
-    recordBtnLabel: "Prendre le selfie",
-  },
-};
+import "./Video.css";
+import SelfieFlow from "./selfie-flow/SelfieFlow";
 
 interface VideoProps {
   setSelfieData: (selfieData: SelfieCaptureData) => void;
@@ -28,17 +18,7 @@ const Video = ({ setSelfieData, setStep }: VideoProps) => {
     setStep(1); // Move to the next step after selfie capture
   };
 
-  return (
-    <SelfieCapture
-      onRecordCompleted={handleSelfie}
-      recorderOptions={{
-        preset: AcquisitionPreset.SELFIE_OPTIMIZED,
-      }}
-      strings={customFR}
-      disableDebugMode={true}
-      hideCapturePrevBtn={true}
-    />
-  );
+  return <SelfieFlow handleSelfie={handleSelfie} />;
 };
 
 export default Video;

@@ -172,15 +172,15 @@ const SelfieConfirmation = ({
       <div className="fixed bottom-0 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] pt-4 bg-white">
         {/* Buttons for confirmation or retry */}
         <div className="flex flex-col gap-3 w-full mb-4">
-          <Button onClick={onConfirm} className="w-full">
-            Confirmer
-          </Button>
           <button
             onClick={onRetake}
             className="text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline"
           >
             Reprendre le selfie
           </button>
+          <Button onClick={onConfirm} className="w-full">
+            Confirmer
+          </Button>
         </div>
         <div className="pb-4">
           <PoweredBy />
