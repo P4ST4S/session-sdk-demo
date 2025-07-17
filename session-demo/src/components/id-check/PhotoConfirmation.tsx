@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Button from "../ui/Button";
-import PoweredBy from "../ui/PoweredBy";
 import Title from "../ui/Title";
 import Subtitle from "../ui/Subtitle";
 import PhotoProcessingLoader from "./PhotoProcessingLoader";
+import ButtonDesktop from "../ui/ButtonDesktop";
 
 interface PhotoConfirmationProps {
   imageUrl: string;
@@ -47,89 +47,87 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
   }
 
   return (
-    <div className="relative flex justify-center w-full px-4 pt-8 pb-[140px] overflow-y-auto lg:flex-col">
-      <div className="flex flex-col mt-4 mx-auto w-full max-w-[322px]">
-        <div className="flex flex-col items-center mx-auto">
-          <Title className="mb-5 sm:mb-2">
-            {requiresTwoSides
-              ? "Confirmation des photos"
-              : "Confirmation de la photo"}
-          </Title>
-          <Subtitle>
-            Vérifiez que votre document est bien visible et lisible avant de
-            continuer
-          </Subtitle>
-        </div>
-        {/* Display the captured image(s) */}
-        <div className="w-full flex flex-col gap-4 my-4 mt-8">
-          {/* Recto image */}
-          <div className="w-full">
-            <div className="flex flex-col">
-              <div
-                className="self-start bg-[#11E5C5] text-white py-1 px-4 z-10 text-sm font-medium shadow-md border-4 border-b-0 border-[#11E5C5] mb-[-3px]"
-                style={{
-                  borderTopLeftRadius: "0.375rem",
-                  borderTopRightRadius: "0.375rem",
-                }}
-              >
-                Recto
+    <div className="flex flex-col justify-between h-full w-full">
+      {/* Main content area */}
+      <div className="flex-1 px-4 py-6 pt-11 md:px-8 md:py-8 overflow-y-auto">
+        <div className="w-full max-w-md mx-auto space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <Title className="text-xl md:text-2xl lg:text-3xl">
+              {requiresTwoSides
+                ? "Confirmation des photos"
+                : "Confirmation de la photo"}
+            </Title>
+            <Subtitle className="text-sm text-gray-600 leading-relaxed">
+              Vérifiez que votre document est bien visible et lisible avant de
+              continuer
+            </Subtitle>
+          </div>
+
+          {/* Display the captured image(s) */}
+          <div className="w-full flex flex-col gap-6">
+            {/* Recto image */}
+            <div className="w-full">
+              <div className="mb-2">
+                <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
+                  Recto
+                </span>
               </div>
-              <div
-                className="overflow-hidden border-3 border-[#11E5C5] lg:flex lg:items-center lg:justify-center"
-                style={{ borderRadius: "0.5rem", borderTopLeftRadius: "0" }}
-              >
+              <div className="relative rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-50">
                 <img
                   src={imageUrl}
                   alt="Document recto"
-                  className="w-full object-contain"
+                  className="w-full h-48 md:h-56 object-contain bg-white"
                 />
               </div>
             </div>
-          </div>
 
-          {/* Verso image - only show if in two-sided mode and we have a verso image */}
-          {requiresTwoSides && versoImageUrl && (
-            <div className="w-full">
-              <div className="flex flex-col">
-                <div
-                  className="self-start bg-[#11E5C5] text-white py-1 px-4 z-10 text-sm font-medium shadow-md border-4 border-b-0 border-[#11E5C5] mb-[-3px]"
-                  style={{
-                    borderTopLeftRadius: "0.375rem",
-                    borderTopRightRadius: "0.375rem",
-                  }}
-                >
-                  Verso
+            {/* Verso image - only show if in two-sided mode and we have a verso image */}
+            {requiresTwoSides && versoImageUrl && (
+              <div className="w-full">
+                <div className="mb-2">
+                  <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium">
+                    Verso
+                  </span>
                 </div>
-                <div
-                  className="overflow-hidden border-3 border-[#11E5C5] lg:flex lg:items-center lg:justify-center"
-                  style={{ borderRadius: "0.5rem", borderTopLeftRadius: "0" }}
-                >
+                <div className="relative rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-50">
                   <img
                     src={versoImageUrl}
                     alt="Document verso"
-                    className="w-full object-contain"
+                    className="w-full h-48 md:h-56 object-contain bg-white"
                   />
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
-      <div className="fixed bottom-0 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] pt-4 bg-white">
-        {/* Buttons for confirmation or retry */}
-        <div className="flex flex-col gap-3 w-full mb-4">
-          <Button onClick={handleConfirm} className="w-full">
-            Confirmer
-          </Button>
-          <button
-            onClick={onRetry}
-            className="text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline"
-          >
-            Reprendre la photo
-          </button>
-        </div>
-        <div className="pb-4">
-          <PoweredBy />
+
+      {/* Footer with buttons */}
+      <div className="sticky bottom-0 md:static bg-white border-t md:border-t-0 p-4 md:p-0 md:pb-8">
+        <div className="w-full max-w-md mx-auto">
+          {/* Mobile layout - stacked buttons */}
+          <div className="flex flex-col space-y-3 md:hidden">
+            <Button onClick={handleConfirm} className="w-full py-3">
+              Confirmer
+            </Button>
+            <button
+              onClick={onRetry}
+              className="w-full text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline py-2"
+            >
+              Reprendre la photo
+            </button>
+          </div>
+
+          {/* Desktop layout - horizontal buttons */}
+          <div className="hidden md:flex gap-3 justify-end">
+            <ButtonDesktop onClick={onRetry} type="back">
+              Reprendre la photo
+            </ButtonDesktop>
+            <ButtonDesktop onClick={handleConfirm} type="continue">
+              Confirmer
+            </ButtonDesktop>
+          </div>
         </div>
       </div>
     </div>

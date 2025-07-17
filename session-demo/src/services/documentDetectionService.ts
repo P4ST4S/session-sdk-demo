@@ -11,14 +11,10 @@ export class DocumentDetectionService {
 
   async loadModel() {
     if (!this.model) {
-      console.log("[DocumentDetection] Initializing backend...");
       await tf.setBackend("webgl");
       await tf.ready();
-      console.log(
-        "[DocumentDetection] Backend ready, loading coco-ssd model..."
-      );
+
       this.model = await cocoSsd.load();
-      console.log("[DocumentDetection] Model loaded successfully.");
     }
   }
 
@@ -43,11 +39,9 @@ export class DocumentDetectionService {
       }
 
       this.isDetecting = true;
-      console.log("[DocumentDetection] Starting a new detection...");
 
       try {
         const predictions = await this.model.detect(videoElement);
-        console.log("[DocumentDetection] Predictions:", predictions);
 
         const documentLike = predictions.find(
           (pred) =>
@@ -56,7 +50,6 @@ export class DocumentDetectionService {
         );
 
         if (documentLike) {
-          console.log("[DocumentDetection] Document detected:", documentLike);
           const ctx = canvasElement.getContext("2d");
 
           if (ctx) {
@@ -81,9 +74,7 @@ export class DocumentDetectionService {
             );
 
             const dataUrl = canvasElement.toDataURL("image/jpeg");
-            console.log(
-              "[DocumentDetection] Image captured, calling callback."
-            );
+
             onDocumentDetected(dataUrl);
           } else {
             console.warn(
@@ -117,7 +108,6 @@ export class DocumentDetectionService {
   }
 
   stopDocumentDetection() {
-    console.log("[DocumentDetection] Stopping detection.");
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = null;

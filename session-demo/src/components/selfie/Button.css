@@ -1,0 +1,26 @@
+/* Styles pour le bouton dans le flux selfie */
+.selfie-button {
+  background-color: #11e5c5 !important;
+  color: #3c3c40 !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+}
+
+.selfie-button:hover {
+  background-color: #7dffeb !important;
+}
+
+.selfie-button:active {
+  background-color: #11e5c57c !important;
+}
+
+.selfie-button:disabled {
+  background-color: #e2e8f0 !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+/* Points de chargement dans le bouton */
+.selfie-button .loading-dots span {
+  background-color: white !important;
+}

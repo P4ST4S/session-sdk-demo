@@ -8,4 +8,5 @@ export interface SelectProps {
   title: string;
   selectedItem: SelectItem;
   onChange: (item: SelectItem) => void;
+  className?: string;
 }

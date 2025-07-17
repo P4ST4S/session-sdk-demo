@@ -53,7 +53,6 @@ const Photo: React.FC<PhotoProps> = ({ onCapture }) => {
 
     // Cleanup function to stop the camera when the component unmounts
     return () => {
-      console.log("Photo component unmounting - stopping camera");
       cameraService.stopCamera();
       setIsDetecting(false);
 
@@ -110,36 +109,41 @@ const Photo: React.FC<PhotoProps> = ({ onCapture }) => {
   };
 
   return (
-    <div className="relative w-full h-full">
-      {cameraError ? (
-        <CameraError errorMessage={cameraError} onRetry={handleRetry} />
-      ) : (
-        <>
-          {/* Livestream of the camera*/}
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className={`absolute inset-0 w-full h-full object-cover z-0 ${
-              facingMode === "user" ? "scale-x-[-1]" : ""
-            }`}
-          />
+    <div className="flex flex-col justify-between h-full w-full">
+      {/* Camera content area */}
+      <div className="flex-1 relative overflow-hidden">
+        {cameraError ? (
+          <div className="flex items-center justify-center h-full px-4 py-6">
+            <CameraError errorMessage={cameraError} onRetry={handleRetry} />
+          </div>
+        ) : (
+          <>
+            {/* Livestream of the camera*/}
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`absolute inset-0 w-full h-full object-cover z-0 ${
+                facingMode === "user" ? "scale-x-[-1]" : ""
+              }`}
+            />
 
-          {/* Canvas for capture and detection */}
-          <canvas ref={canvasRef} className="hidden" />
+            {/* Canvas for capture and detection */}
+            <canvas ref={canvasRef} className="hidden" />
 
-          {/* Mask */}
-          <CameraMask
-            isDetecting={isDetecting}
-            isPortrait={isPortrait}
-            facingMode={facingMode}
-          />
+            {/* Mask */}
+            <CameraMask
+              isDetecting={isDetecting}
+              isPortrait={isPortrait}
+              facingMode={facingMode}
+            />
 
-          {/* Button to change orientation */}
-          <OrientationToggle onCameraToggle={toggleCamera} />
-        </>
-      )}
+            {/* Button to change orientation */}
+            <OrientationToggle onCameraToggle={toggleCamera} />
+          </>
+        )}
+      </div>
     </div>
   );
 };

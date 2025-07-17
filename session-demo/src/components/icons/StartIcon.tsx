@@ -1,6 +1,8 @@
-import type { IconProps } from "../../types/icons";
+interface StartIconProps {
+  className?: string;
+}
 
-const StartIcon = ({ className }: IconProps) => {
+const StartIcon = ({ className }: StartIconProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

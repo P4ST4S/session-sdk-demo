@@ -1,0 +1,99 @@
+/* Styles spécifiques pour éliminer complètement les bords arrondis et le fond noir du flux selfie */
+.video-js,
+.video-js *,
+.vjs-default-skin,
+.vjs-big-play-button,
+.vjs-control-bar,
+uni-video-recorder::shadow-dom(video-js),
+uni-video-recorder::part(video-js) {
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  overflow: hidden !important;
+}
+
+/* Assurer que tous les composants video-js prennent tout l'espace */
+.video-js {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Forcer l'élément vidéo à prendre tout l'espace */
+.video-js video {
+  object-fit: cover !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0 !important;
+}
+
+/* S'assurer que les barres de contrôle et boutons n'ont pas de bords arrondis */
+.vjs-control-bar,
+.vjs-big-play-button,
+.vjs-menu-button,
+.vjs-menu-content,
+.vjs-modal-dialog,
+.vjs-volume-control,
+.vjs-progress-control {
+  border-radius: 0 !important;
+}
+
+/* Supprimer tout masque ou ombre qui pourrait créer un effet de fond noir */
+.video-container::before,
+.video-container::after,
+.selfie::before,
+.selfie::after,
+uni-video-recorder::before,
+uni-video-recorder::after {
+  display: none !important;
+}
+
+/* Cibler spécifiquement les éléments web components */
+::part(video),
+::shadow-dom(video),
+::part(canvas),
+::shadow-dom(canvas) {
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+/* Styles spécifiques pour les navigateurs basés sur WebKit/Blink */
+@supports (-webkit-appearance: none) {
+  .selfie video,
+  .selfie canvas,
+  uni-video-recorder video,
+  uni-video-recorder canvas {
+    border-radius: 0 !important;
+    -webkit-border-radius: 0 !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+}
+
+/* Styles spécifiques pour Firefox */
+@-moz-document url-prefix() {
+  .selfie video,
+  .selfie canvas,
+  uni-video-recorder video,
+  uni-video-recorder canvas {
+    border-radius: 0 !important;
+  }
+}
+
+/* Préserver les styles du bouton "Prendre mon selfie" */
+.selfie button,
+button.selfie-button,
+.selfie-container button,
+.selfie .sticky button {
+  background-color: #11e5c5 !important;
+  border-radius: 12px !important;
+  color: #3c3c40 !important;
+  overflow: visible !important;
+}
+
+.selfie button:disabled,
+button.selfie-button:disabled,
+.selfie-container button:disabled,
+.selfie .sticky button:disabled {
+  background-color: #e2e8f0 !important;
+}

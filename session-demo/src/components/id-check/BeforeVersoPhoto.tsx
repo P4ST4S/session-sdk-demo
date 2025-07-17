@@ -1,6 +1,5 @@
 import { beforeVersoIcon } from "../../assets";
 import Button from "../ui/Button";
-import PoweredBy from "../ui/PoweredBy";
 import Subtitle from "../ui/Subtitle";
 import Title from "../ui/Title";
 
@@ -14,30 +13,39 @@ const BeforeVersoPhoto = ({ setStep }: BeforeVersoPhotoProps) => {
   };
 
   return (
-    <div className="relative flex justify-content w-full px-4 pt-8 pb-[80px] overflow-hidden lg:flex-col">
-      <div className="flex flex-col gap-5 mt-4 mx-auto w-full max-w-[322px]">
-        <div className="flex flex-col sm:flex-col-reverse items-center mx-auto overflow-hidden">
-          <div className="flex flex-col">
-            <Title className="mb-5 sm:mb-2">Retournez votre document</Title>
-            <Subtitle>
+    <div className="flex flex-col justify-between h-full w-full">
+      {/* Main content area */}
+      <div className="flex-1 px-4 py-6 pt-11 md:px-8 md:py-8">
+        <div className="w-full max-w-md mx-auto space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <Title className="text-xl md:text-2xl lg:text-3xl">
+              Retournez votre document
+            </Title>
+            <Subtitle className="text-sm text-gray-600 leading-relaxed">
               Maintenant, nous avons besoin de l'autre face de votre document.
               Retournez-le et tenez-le face à la caméra.
             </Subtitle>
           </div>
+
+          {/* Illustration */}
+          <div className="flex justify-center">
+            <img
+              src={beforeVersoIcon}
+              alt="Avant de prendre la photo du verso"
+              className="max-w-full h-auto object-contain max-h-[30vh]"
+            />
+          </div>
         </div>
-        <img
-          src={beforeVersoIcon}
-          alt="Avant de prendre la photo du verso"
-          className="max-h-[60vh] w-auto object-contain ml-[-20px]"
-        />
       </div>
-      <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
-        <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
-          <Button onClick={goOnNextStep} className="w-full">
+
+      {/* Footer with button */}
+      <div className="sticky bottom-0 md:static bg-white border-t md:border-t-0 p-4 md:p-0 md:pb-8">
+        <div className="w-full max-w-md mx-auto">
+          <Button onClick={goOnNextStep} className="w-full py-3 md:py-4">
             Je suis prêt.e
           </Button>
         </div>
-        <PoweredBy />
       </div>
     </div>
   );

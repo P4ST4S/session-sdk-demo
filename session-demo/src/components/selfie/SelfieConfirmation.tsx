@@ -14,7 +14,6 @@ import { useEffect, useState, useRef } from "react";
 import Button from "../ui/Button";
 import Title from "../ui/Title";
 import Subtitle from "../ui/Subtitle";
-import PoweredBy from "../ui/PoweredBy";
 import type { SelfieCaptureData } from "../../types/selfie";
 
 interface SelfieConfirmationProps {
@@ -64,12 +63,10 @@ const SelfieConfirmation = ({
       tempVideo.src = videoUrl;
 
       tempVideo.onloadedmetadata = () => {
-        console.log("✅ Metadata loaded, seeking to 0.1s");
         tempVideo.currentTime = 0.1;
       };
 
       tempVideo.onseeked = () => {
-        console.log("🖼️ Frame ready to capture");
         const canvas = document.createElement("canvas");
         canvas.width = tempVideo.videoWidth || 320;
         canvas.height = tempVideo.videoHeight || 240;
@@ -100,68 +97,168 @@ const SelfieConfirmation = ({
   }, [selfieData]);
 
   if (isLoading) {
-    console.log("Loading state shown");
     return (
-      <div className="flex flex-col items-center justify-center h-full">
-        <div className="animate-pulse text-center">
-          <div className="mb-4">Traitement de votre selfie...</div>
-          <div className="w-10 h-10 border-4 border-[#11E5C5] border-t-transparent rounded-full animate-spin mx-auto"></div>
+      <div className="flex flex-col items-center justify-center h-full bg-white">
+        <div className="text-center p-6">
+          <div className="mb-4 text-gray-700">
+            Traitement de votre selfie...
+          </div>
+          <div className="w-12 h-12 border-4 border-[#11E5C5] border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
       </div>
     );
   }
 
   if (error) {
-    console.log("Error state shown:", error);
     return (
-      <div className="flex flex-col items-center justify-center h-full">
-        <div className="text-center">
-          <div className="mb-4 text-red-500">{error}</div>
-          <button
-            onClick={onRetake}
-            className="px-4 py-2 bg-[#11E5C5] text-white rounded-lg hover:bg-[#0bb8a0] transition-colors"
-          >
+      <div className="flex flex-col items-center justify-center h-full bg-white">
+        <div className="text-center p-6 max-w-md mx-auto">
+          <div className="w-16 h-16 mx-auto mb-4 text-red-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+          </div>
+          <Title className="text-xl mb-2">Une erreur est survenue</Title>
+          <p className="mb-6 text-sm text-gray-600">{error}</p>
+          <Button onClick={onRetake} className="w-full md:max-w-xs mx-auto">
             Reprendre le selfie
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
   if (!imageUrl) {
-    console.log("No image URL available despite loading being complete");
     return (
-      <div className="flex flex-col items-center justify-center h-full">
-        <div className="text-center">
-          <div className="mb-4">Impossible d'afficher le selfie</div>
-          <button
-            onClick={onRetake}
-            className="px-4 py-2 bg-[#11E5C5] text-white rounded-lg hover:bg-[#0bb8a0] transition-colors"
-          >
+      <div className="flex flex-col items-center justify-center h-full bg-white">
+        <div className="text-center p-6 max-w-md mx-auto">
+          <div className="w-16 h-16 mx-auto mb-4 text-yellow-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <Title className="text-xl mb-2">
+            Impossible d'afficher le selfie
+          </Title>
+          <p className="mb-6 text-sm text-gray-600">
+            Nous n'avons pas pu traiter correctement votre selfie.
+          </p>
+          <Button onClick={onRetake} className="w-full md:max-w-xs mx-auto">
             Reprendre le selfie
-          </button>
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative flex flex-col justify-content w-full px-4 pt-8 pb-[80px] overflow-hidden">
-      <div className="flex flex-col gap-5 mt-4 mx-auto w-full max-w-[322px]">
-        <div className="flex flex-col items-center mx-auto overflow-hidden">
-          <Title className="mb-5">Confirmez votre selfie</Title>
-          <Subtitle className="mb-6">
-            Vérifiez que votre selfie est clairement visible et bien cadré.
-          </Subtitle>
+    <div className="flex flex-col justify-between h-full w-full bg-white">
+      {/* Header */}
+      <div className="p-4 text-center bg-white border-b border-gray-100">
+        <Title className="text-xl md:text-2xl">Confirmez votre selfie</Title>
+        <Subtitle className="text-xs text-gray-600 mt-2 md:text-sm">
+          Vérifiez que votre visage est clairement visible
+        </Subtitle>
+      </div>
 
-          <div className="w-full mb-8">
-            <div className="overflow-hidden border-3 border-[#11E5C5] rounded-lg mb-4">
+      {/* Main content area */}
+      <div className="flex-1 px-4 py-6 md:px-8 md:py-8 overflow-y-auto">
+        <div className="w-full max-w-md mx-auto space-y-6">
+          {/* Selfie display with frame */}
+          <div className="w-full bg-white rounded-lg overflow-hidden shadow-md">
+            <div className="relative rounded-lg overflow-hidden border-2 border-[#11E5C5]">
               <img
                 src={imageUrl}
                 alt="Votre selfie"
-                className="w-full object-contain"
+                className="w-full h-64 md:h-80 object-cover bg-white"
               />
+              {/* Overlay pour améliorer la lisibilité */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/30 to-transparent p-3">
+                <p className="text-white text-xs text-center">
+                  Selfie capturé avec succès
+                </p>
+              </div>
             </div>
+          </div>
+
+          {/* Checklist de confirmation */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-medium text-sm mb-3">Vérifiez que :</h3>
+            <ul className="space-y-2 text-xs text-gray-700">
+              <li className="flex items-start">
+                <svg
+                  className="w-4 h-4 text-green-500 mr-2 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Votre visage est bien visible et occupe la majeure partie de
+                l'image
+              </li>
+              <li className="flex items-start">
+                <svg
+                  className="w-4 h-4 text-green-500 mr-2 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                L'image est nette et bien éclairée
+              </li>
+              <li className="flex items-start">
+                <svg
+                  className="w-4 h-4 text-green-500 mr-2 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Aucun objet ne cache votre visage (lunettes de soleil, masque,
+                etc.)
+              </li>
+            </ul>
           </div>
 
           {/* Canvas caché utilisé pour le traitement des images */}
@@ -169,21 +266,34 @@ const SelfieConfirmation = ({
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] pt-4 bg-white">
-        {/* Buttons for confirmation or retry */}
-        <div className="flex flex-col gap-3 w-full mb-4">
-          <button
-            onClick={onRetake}
-            className="text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline"
-          >
-            Reprendre le selfie
-          </button>
-          <Button onClick={onConfirm} className="w-full">
-            Confirmer
-          </Button>
-        </div>
-        <div className="pb-4">
-          <PoweredBy />
+      {/* Footer with buttons */}
+      <div className="sticky bottom-0 bg-white border-t border-gray-100 p-4 md:p-6">
+        <div className="w-full max-w-md mx-auto">
+          {/* Mobile layout - stacked buttons */}
+          <div className="flex flex-col space-y-3 md:hidden">
+            <Button onClick={onConfirm} className="w-full py-3">
+              Confirmer
+            </Button>
+            <button
+              onClick={onRetake}
+              className="w-full text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline py-2"
+            >
+              Reprendre le selfie
+            </button>
+          </div>
+
+          {/* Desktop layout - horizontal buttons */}
+          <div className="hidden md:flex gap-3 justify-between items-center">
+            <button
+              onClick={onRetake}
+              className="px-6 py-3 text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline border border-gray-300 rounded-lg"
+            >
+              Reprendre le selfie
+            </button>
+            <Button onClick={onConfirm} className="px-6 py-3">
+              Confirmer
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -53,8 +53,10 @@ body.recording-selfie {
 .selfie uni-video-recorder {
   display: block;
   margin: 0 auto;
-  max-width: 100%;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  object-fit: cover;
 }
 
 .selfie .video-container {
@@ -63,9 +65,9 @@ body.recording-selfie {
   align-items: center;
   width: 100%;
   height: 100%;
-  max-height: 70vh;
   overflow: hidden;
   position: relative;
+  flex: 1 1 auto;
 }
 
 /* Styles pour s'assurer que le VideoRecorder reste dans ses limites */
@@ -95,4 +97,360 @@ body.selfie-active {
 html,
 body {
   overscroll-behavior-y: contain;
+}
+
+/* Styles pour le cadre de guidage du selfie */
+.selfie-guide-frame {
+  transition: box-shadow 0.3s ease;
+  border: 2px solid #11e5c5;
+  border-radius: 50%;
+}
+
+/* Animation pour le bouton d'enregistrement */
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(17, 229, 197, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(17, 229, 197, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(17, 229, 197, 0);
+  }
+}
+
+.selfie-record-btn {
+  animation: pulse-border 2s infinite;
+}
+
+/* Meilleure mise en page pour les instructions */
+.selfie-instructions {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling pour le point rouge d'enregistrement */
+.recording-indicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 4px 8px;
+  border-radius: 16px;
+}
+
+.recording-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ff3b30;
+  margin-right: 8px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Effet de transition pour la confirmation */
+.selfie-confirmation-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.selfie-confirmation-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms, transform 300ms;
+}
+
+/* Style pour l'aperçu du selfie */
+.selfie-preview {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 2px solid #11e5c5;
+  transition: transform 0.2s ease-in-out;
+}
+
+.selfie-preview:hover {
+  transform: scale(1.02);
+}
+
+.selfie-preview::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 80%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  pointer-events: none;
+}
+
+/* Style spécifique pour les points de chargement dans le bouton */
+.selfie button .loading-dots span {
+  background-color: white !important;
+}
+
+/* Animations pour les points de chargement */
+.loading-dots span {
+  animation: loadingDots 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes loadingDots {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Style pour les boutons alternatifs */
+.alt-button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.alt-button:hover {
+  background-color: #f8fafc;
+}
+
+.alt-button:active {
+  transform: translateY(1px);
+}
+
+/* Règles spécifiques pour le composant Unissey */
+uni-video-recorder::part(video-container),
+uni-video-recorder::shadow-dom(video-container) {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: none !important;
+  object-fit: cover !important;
+}
+
+/* Assurer que le composant vidéo remplit tout l'espace */
+.selfie uni-video-recorder video,
+.selfie uni-video-recorder canvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  max-height: none !important;
+}
+
+/* S'assurer que la vidéo est centrée et remplit tout l'espace */
+.video-fullscreen-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Style pour le conteneur de l'enregistreur vidéo en plein écran */
+.selfie-recorder-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Styles pour garantir que le selfie prend tout l'espace disponible */
+.selfie-fullscreen {
+  height: 100%;
+  overflow: hidden;
+}
+
+.selfie-fullscreen body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.selfie-fullscreen #root,
+.selfie-fullscreen [data-reactroot] {
+  height: 100%;
+}
+
+/* Styles pour forcer le VideoRecorder à prendre toute la hauteur disponible */
+.selfie .video-container uni-video-recorder {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Désactiver toutes les marges internes qui pourraient affecter la hauteur */
+.selfie * {
+  box-sizing: border-box;
+}
+
+/* S'assurer que les composants parents ont aussi 100% de hauteur */
+.selfie-parent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Style pour le cadre qui s'adapte à différentes tailles d'écran */
+@media (max-height: 600px) {
+  .selfie-guide-frame {
+    height: 250px !important;
+    max-width: 250px !important;
+  }
+}
+
+@media (max-height: 500px) {
+  .selfie-guide-frame {
+    height: 200px !important;
+    max-width: 200px !important;
+  }
+}
+
+/* Supprimer les bords arrondis du composant VideoRecorder */
+.selfie uni-video-recorder,
+uni-video-recorder::part(root),
+uni-video-recorder::shadow-dom(root),
+uni-video-recorder video,
+uni-video-recorder canvas {
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Cibler spécifiquement les éléments internes du VideoRecorder */
+uni-video-recorder::part(video-container),
+uni-video-recorder::shadow-dom(video-container),
+uni-video-recorder::part(video),
+uni-video-recorder::shadow-dom(video) {
+  border-radius: 0 !important;
+}
+
+/* S'assurer que tous les conteneurs internes n'ont pas de bords arrondis */
+.video-container > div,
+.video-container > div > *,
+.selfie uni-video-recorder > * {
+  border-radius: 0 !important;
+}
+
+/* Classe spécifique pour supprimer les bords arrondis du VideoRecorder */
+.video-recorder-no-radius,
+.video-recorder-no-radius::part(video),
+.video-recorder-no-radius::shadow-dom(video),
+.video-recorder-no-radius video,
+.video-recorder-no-radius canvas,
+.video-recorder-no-radius * {
+  border-radius: 0 !important;
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Règles très strictes pour supprimer tous les bords arrondis partout dans le composant selfie */
+.selfie video,
+.selfie canvas,
+.selfie uni-video-recorder,
+.selfie uni-video-recorder *,
+.video-container *,
+uni-video-recorder,
+uni-video-recorder *,
+uni-video-recorder *::before,
+uni-video-recorder *::after,
+uni-video-recorder div,
+uni-video-recorder video,
+uni-video-recorder canvas {
+  border-radius: 0 !important;
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+
+/* Forcer la suppression des bords arrondis sur tous les éléments shadow DOM */
+:host,
+:host(*),
+::part(*),
+::shadow-dom(*) {
+  border-radius: 0 !important;
+  -webkit-border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+}
+
+/* Style extrêmement spécifique pour éliminer les bords arrondis */
+.video-container uni-video-recorder {
+  border-radius: 0 !important;
+  transform: translateZ(0);
+}
+
+/* Styles appliqués au niveau global pour affecter les web components */
+:root {
+  --uni-video-recorder-border-radius: 0 !important;
+  --uni-border-radius: 0 !important;
+}
+
+/* Utiliser la méthode !important sur le style direct */
+.selfie .video-container uni-video-recorder {
+  --border-radius: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Préserver les styles des boutons */
+.selfie button {
+  background-color: var(--uni-primary-color, #11e5c5) !important;
+  color: #3c3c40 !important;
+  border-radius: 12px !important;
+}
+
+.selfie button:hover {
+  background-color: #7dffeb !important;
+}
+
+.selfie button:active {
+  background-color: #11e5c57c !important;
+}
+
+.selfie button:disabled {
+  background-color: #e2e8f0 !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
 }

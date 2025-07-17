@@ -1,7 +1,13 @@
 import type React from "react";
 
+export interface SessionConfig {
+  selfie?: boolean;
+  requireMobile?: boolean;
+}
+
 export interface DatakeenSessionProps {
   sessionId: string;
+  sessionConfig?: SessionConfig;
 }
 
 export interface UseSessionReturn {

@@ -41,12 +41,11 @@
  */
 
 import Button from "../ui/Button";
-import PoweredBy from "../ui/PoweredBy";
 import Subtitle from "../ui/Subtitle";
 import Title from "../ui/Title";
 import { countries, documentTypesFromCountryId } from "../../utils/jdiCountry";
 import type { DrawerItem } from "../../utils/jdiCountry";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SelectDrawer } from "../ui/SelectDrawer";
 import { useDocumentContext } from "../../context/DocumentContext";
 
@@ -69,77 +68,74 @@ const ChooseCountryJDI = ({
   const { selectedDocumentType, setSelectedDocumentType } =
     useDocumentContext();
 
-  // Log what is currently selected
-  useEffect(() => {
-    console.log("Selected country:", selectedCountry);
-    console.log("Selected document type from context:", selectedDocumentType);
-  }, [selectedCountry, selectedDocumentType]);
-
   const goOnNextStep = () => {
-    setStep(3);
+    setStep(5);
     setCountry(selectedCountry?.id || null);
 
     // Make sure the document is correctly defined in both context and props
     setDocumentType(selectedDocumentType?.id || null);
 
     // Debug log
-    console.log("Going to next step with document context:", {
-      id: selectedDocumentType?.id,
-      label: selectedDocumentType?.label,
-      hasTwoSides: selectedDocumentType?.hasTwoSides,
-    });
   };
 
   return (
-    <div className="relative flex sm:items-center justify-content w-full px-6 sm:px-12 pt-8 pb-[80px] overflow-hidden sm:flex-col">
-      <div className="flex flex-col gap-5 mt-4 mx-auto w-full max-w-[322px]">
-        <div className="flex flex-col sm:flex-col-reverse items-center mx-auto overflow-hidden">
-          <div className="flex flex-col">
-            <Title className="mb-5 sm:mb-2">Pays émetteur du document</Title>
-            <Subtitle>
+    <div className="flex flex-col justify-between h-full w-full">
+      {/* Main content area */}
+      <div className="flex-1 px-4 py-6 pt-11 md:px-8 md:py-8">
+        <div className="w-full max-w-md mx-auto space-y-6">
+          {/* Header */}
+          <div className="text-center space-y-4">
+            <Title className="text-xl md:text-2xl lg:text-3xl">
+              Pays émetteur du document
+            </Title>
+            <Subtitle className="text-sm md:text-base text-gray-600 leading-relaxed">
               Sélectionnez le pays émetteur indiqué sur votre document
-              d’identité, ainsi que le type de document que vous souhaitez
+              d'identité, ainsi que le type de document que vous souhaitez
             </Subtitle>
           </div>
-        </div>
 
-        <div className="flex flex-col sm:flex-row items-center">
-          <SelectDrawer
-            title="Pays émetteur"
-            items={countries}
-            selectedItem={selectedCountry}
-            onChange={setSelectedCountry}
-            errorMessage="Aucun pays trouvé"
-          />
-        </div>
+          {/* Form fields */}
+          <div className="space-y-6">
+            {/* Country Selection */}
+            <div className="space-y-2">
+              <SelectDrawer
+                title="Pays émetteur"
+                items={countries}
+                selectedItem={selectedCountry}
+                onChange={setSelectedCountry}
+                errorMessage="Aucun pays trouvé"
+              />
+            </div>
 
-        {selectedCountry && (
-          <div className="flex flex-col sm:flex-row items-center mt-[-30px]">
-            <SelectDrawer
-              title="Type du document"
-              items={documentTypesFromCountryId(selectedCountry.id)}
-              selectedItem={selectedDocumentType}
-              onChange={(docType) => {
-                setSelectedDocumentType(docType);
-                console.log("Selected document type with properties:", docType);
-              }}
-              errorMessage="Aucun type de document trouvé"
-            />
+            {/* Document Type Selection */}
+            {selectedCountry && (
+              <div className="space-y-2">
+                <SelectDrawer
+                  title="Type du document"
+                  items={documentTypesFromCountryId(selectedCountry.id)}
+                  selectedItem={selectedDocumentType}
+                  onChange={(docType) => {
+                    setSelectedDocumentType(docType);
+                  }}
+                  errorMessage="Aucun type de document trouvé"
+                />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
-      <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
-        <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
+      {/* Footer with button */}
+      <div className="sticky bottom-0 md:static bg-white border-t md:border-t-0 p-4 md:p-0 md:pb-8">
+        <div className="w-full max-w-md mx-auto">
           <Button
             onClick={goOnNextStep}
-            className="w-full"
+            className="w-full py-3 md:py-4"
             disabled={!selectedCountry || !selectedDocumentType}
           >
             Commencer ma vérification
           </Button>
         </div>
-        <PoweredBy />
       </div>
     </div>
   );

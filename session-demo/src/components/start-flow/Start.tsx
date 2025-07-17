@@ -1,33 +1,5 @@
-/**
- * @file Start.tsx
- * @description This component serves as the initial welcome screen in the identity verification flow.
- * It provides users with an introduction to the verification process and a button to begin.
- *
- * @component Start
- *
- * @props {function} setStep - Callback function to change the current step in the parent component
- *                            workflow. Called with 1 when the user clicks to start verification.
- *
- * @flow
- * 1. User is presented with a welcome screen explaining the identity verification purpose
- * 2. User clicks "Commencer ma vérification" (Start my verification) to proceed
- * 3. On button click, user is taken to the next step (CGU/Terms of Use)
- *
- * @responsiveness
- * - Mobile: Displays the StartIcon below the title and subtitle
- * - Desktop: Displays the StartIcon above the title and subtitle and shows additional terms notice
- *
- * @dependencies
- * - StartIcon - SVG icon component for visual representation
- * - UI components for consistent styling (Title, Subtitle, Button, etc.)
- *
- * @example
- * <Start setStep={(step) => setCurrentStep(step)} />
- */
-
 import StartIcon from "../icons/StartIcon";
 import Button from "../ui/Button";
-import PoweredBy from "../ui/PoweredBy";
 import Subtitle from "../ui/Subtitle";
 import Title from "../ui/Title";
 
@@ -37,33 +9,44 @@ const Start = ({ setStep }: { setStep: (nubr: number) => void }) => {
   };
 
   return (
-    <div className="relative flex sm:items-center justify-content w-full px-6 sm:px-12 pt-8 pb-[80px] overflow-hidden sm:flex-col">
-      <div className="w-[345px] flex flex-col sm:flex-col-reverse items-center mx-auto overflow-hidden">
-        <StartIcon className="w-[230px] h-[230px] mb-[78px]" />
-        <div className="flex flex-col">
-          <Title className="mb-5 sm:mb-2">Vérifions votre identité</Title>
-          <Subtitle>
-            Pour réduire le risque de fraude, nous devons vérifier votre
-            identité
-          </Subtitle>
+    <div className="flex flex-col justify-between h-full w-full">
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-8 md:px-8">
+        <div className="w-full max-w-md mx-auto text-center space-y-6">
+          {/* Icon - shown on top for both mobile and desktop */}
+          <div className="flex justify-center">
+            <StartIcon className="w-48 h-48" />
+          </div>
+
+          {/* Text content */}
+          <div className="space-y-4">
+            <Title className="text-xl md:text-2xl lg:text-3xl">
+              Vérifions votre identité
+            </Title>
+            <Subtitle className="text-sm md:text-base text-gray-600 leading-relaxed">
+              Pour réduire le risque de fraude, nous devons vérifier votre
+              identité
+            </Subtitle>
+          </div>
+
+          {/* Terms notice */}
+          <div className=" md:block mt-8">
+            <p className="text-xs text-gray-500 leading-relaxed max-w-sm mx-auto">
+              En cliquant sur commencer, j'accepte les conditions d'utilisation
+              de Datakeen et je déclare avoir lu la déclaration de protection
+              des données.
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="hidden sm:flex w-[450px]">
-        <p className="text-[#3C3C40B3] text-center text-[12px] font-semibold leading-[120%] mb-[18px]">
-          En cliquant sur commencer, j’accepte les conditions d’utilisation de
-          Datakeen et je déclare avoir lu la déclaration de protection des
-          données.
-        </p>
-      </div>
-
-      <div className="fixed bottom-5 left-0 w-full px-6 sm:static sm:px-12 pb-[env(safe-area-inset-bottom)] bg-white">
-        <div className="max-w-[345px] mx-auto py-4 sm:mb-4">
-          <Button onClick={goOnCGU} className="w-full">
+      {/* Button area - sticky on mobile, inline on desktop */}
+      <div className="sticky bottom-0 md:static bg-white border-t md:border-t-0 p-4 md:p-0 md:pb-8">
+        <div className="w-full max-w-md mx-auto">
+          <Button onClick={goOnCGU} className="w-full py-3 md:py-4">
             Commencer ma vérification
           </Button>
         </div>
-        <PoweredBy />
       </div>
     </div>
   );

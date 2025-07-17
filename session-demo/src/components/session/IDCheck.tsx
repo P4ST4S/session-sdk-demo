@@ -6,14 +6,21 @@ import Photo from "../id-check/Photo";
 import PhotoConfirmation from "../id-check/PhotoConfirmation";
 import { cameraService } from "../../services/cameraService";
 import { useDocumentContext } from "../../context/DocumentContext";
+import { documentTypesFromCountryId } from "../../utils/jdiCountry";
+import JDIDocumentSelection from "../jdi/JDIDocumentSelection";
 
 interface IDCheckProps {
   stepObject: stepObject;
   documentTypeId?: string | null;
+  sessionId?: string;
 }
 
-const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
-  const [internalStep, setInternalStep] = useState(0);
+const IDCheck = ({
+  stepObject,
+  documentTypeId = "jdi-2",
+  sessionId,
+}: IDCheckProps) => {
+  const [internalStep, setInternalStep] = useState(-1); // Commencer à -1 pour l'étape de sélection de document
   const [capturedRectoImage, setCapturedRectoImage] = useState<string | null>(
     null
   );
@@ -22,8 +29,9 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
   );
   const [requiresTwoSides, setRequiresTwoSides] = useState(false);
 
-  // Use the context to get the selected document
-  const { selectedDocumentType } = useDocumentContext();
+  // Use the context to get the selected document and the setter
+  const { selectedDocumentType, setSelectedDocumentType } =
+    useDocumentContext();
 
   // Monitor step changes to ensure the camera is stopped
   useEffect(() => {
@@ -34,25 +42,22 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
     }
   }, [internalStep]);
 
+  // Check if document is already selected in context, if so skip selection step
+  useEffect(() => {
+    if (selectedDocumentType && internalStep === -1) {
+      // Si un document est déjà sélectionné dans le contexte, passer à l'étape suivante
+      setInternalStep(0);
+    }
+  }, [selectedDocumentType, internalStep]);
+
   // Determine if the document needs two sides based on the selected document type
   useEffect(() => {
     if (selectedDocumentType) {
       // Directly use the hasTwoSides property from the selected document
       setRequiresTwoSides(!!selectedDocumentType.hasTwoSides);
-      console.log(
-        "Document context: using hasTwoSides from selectedDocumentType:",
-        {
-          id: selectedDocumentType.id,
-          label: selectedDocumentType.label,
-          hasTwoSides: selectedDocumentType.hasTwoSides,
-        }
-      );
     } else if (documentTypeId) {
       // Fallback if context is not available
-      console.log(
-        "Document context not available, using fallback with documentTypeId:",
-        documentTypeId
-      );
+
       setRequiresTwoSides(documentTypeId !== "jdi-3");
     } else {
       console.log(
@@ -60,15 +65,54 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
       );
     }
   }, [selectedDocumentType, documentTypeId]);
+
+  // Fonction pour gérer la sélection du document
+  const handleDocumentSelect = (documentId: string) => {
+    // Vérifier si c'est un type de document spécial (JDD ou income-proof)
+    if (documentTypeId === "jdd" || documentTypeId === "income-proof") {
+      // Pour les documents spéciaux, créer un document personnalisé
+      const customDoc = {
+        id: documentTypeId,
+        label: documentId, // Utiliser l'option sélectionnée comme label
+        hasTwoSides: false, // Par défaut, ces documents n'ont pas besoin de verso
+      };
+
+      setSelectedDocumentType(customDoc);
+      setInternalStep(0);
+      return;
+    }
+
+    // Traitement standard pour les documents d'identité
+    const countryId = "fr"; // Par défaut la France - pourrait être dynamique
+    const documents = documentTypesFromCountryId(countryId);
+
+    // Mapper l'ID du document du JDIDocumentSelection aux IDs dans frenchDocumentTypes
+    let mappedId = "";
+    if (documentId === "national_id")
+      mappedId = "jdi-2"; // Carte d'identité - Format carte
+    else if (documentId === "passport")
+      mappedId = "jdi-3"; // Passeport biométrique
+    else if (documentId === "driving_license") mappedId = "jdi-5"; // Permis de conduire - Format carte
+
+    const selectedDoc = documents.find((doc) => doc.id === mappedId);
+
+    if (selectedDoc) {
+      // Mettre à jour le contexte avec le document sélectionné
+      setSelectedDocumentType(selectedDoc);
+      // Passer à l'étape suivante
+      setInternalStep(0);
+    } else {
+      console.error(
+        "Document non trouvé pour l'ID:",
+        mappedId,
+        "depuis documentId:",
+        documentId
+      );
+    }
+  };
+
   const onCaptureRecto = (image: string) => {
-    console.log("Captured recto image:", image);
     setCapturedRectoImage(image);
-    console.log(
-      "Requires two sides:",
-      requiresTwoSides,
-      "from document:",
-      selectedDocumentType?.label
-    );
 
     // Routing logic based on whether the document requires two sides
     if (requiresTwoSides) {
@@ -81,7 +125,6 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
   };
 
   const onCaptureVerso = (image: string) => {
-    console.log("Captured verso image:", image);
     setCapturedVersoImage(image);
     setInternalStep(4); // Go to confirmation after capturing the verso
   };
@@ -126,8 +169,29 @@ const IDCheck = ({ stepObject, documentTypeId = "jdi-2" }: IDCheckProps) => {
     stepObject.setStep(1); // Return to the user input step
   };
 
+  // Gérer le retour en arrière
+  const handleBack = () => {
+    // Si on est à l'étape de sélection du document, revenir à l'étape précédente du flux principal
+    if (internalStep === -1) {
+      stepObject.setStep(stepObject.step - 1);
+    } else {
+      // Sinon, revenir à l'étape précédente du flux interne
+      setInternalStep(Math.max(-1, internalStep - 1));
+    }
+  };
+
   return (
     <>
+      {/* Step -1: Document type selection */}
+      {internalStep === -1 && (
+        <JDIDocumentSelection
+          onDocumentSelect={handleDocumentSelect}
+          onBack={handleBack}
+          documentTypeId={documentTypeId as string}
+          sessionId={sessionId}
+        />
+      )}
+
       {/* Step 0: Instructions before the first photo (front) */}
       {internalStep === 0 && <BeforePhoto setStep={setInternalStep} />}
 

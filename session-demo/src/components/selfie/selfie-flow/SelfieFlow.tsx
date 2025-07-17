@@ -10,10 +10,18 @@ const SelfieFlow = ({ handleSelfie }: SelfieFlowProps) => {
   const [internalStep, setInternalStep] = useState(0);
 
   return (
-    <>
-      {internalStep === 0 && <InstructionsSelfie setStep={setInternalStep} />}
-      {internalStep === 1 && <SelfieRecorder handleSelfie={handleSelfie} />}
-    </>
+    <div className="h-full w-full flex flex-col">
+      {internalStep === 0 && (
+        <div className="flex-1 flex flex-col h-full">
+          <InstructionsSelfie setStep={setInternalStep} />
+        </div>
+      )}
+      {internalStep === 1 && (
+        <div className="flex-1 flex flex-col h-full overflow-hidden">
+          <SelfieRecorder handleSelfie={handleSelfie} />
+        </div>
+      )}
+    </div>
   );
 };
 
