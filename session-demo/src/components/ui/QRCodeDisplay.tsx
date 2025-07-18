@@ -38,7 +38,8 @@ const QRCodeDisplay = ({
       }
 
       try {
-        await QRCode.toCanvas(canvasRef.current, url, {
+        // Utiliser toDataURL au lieu de toCanvas pour éviter les problèmes de compatibilité
+        const qrDataUrl = await QRCode.toDataURL(url, {
           width: 256,
           margin: 2,
           color: {
@@ -46,6 +47,19 @@ const QRCodeDisplay = ({
             light: "#FFFFFF",
           },
         });
+
+        // Dessiner l'image sur le canvas
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          const img = new Image();
+          img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+          };
+          img.src = qrDataUrl;
+        }
       } catch (error) {
         console.error("Erreur lors de la génération du QR code:", error);
         setQrError("Impossible de générer le QR code");

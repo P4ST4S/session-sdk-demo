@@ -39,8 +39,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       datakeen-session-react:
-        specifier: 1.0.10
-        version: 1.0.10(@tensorflow/tfjs-converter@4.22.0(@tensorflow/tfjs-core@4.22.0))(@tensorflow/tfjs-core@4.22.0)(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(seedrandom@3.0.5)
+        specifier: 1.0.18
+        version: 1.0.18(@tensorflow/tfjs-converter@4.22.0(@tensorflow/tfjs-core@4.22.0))(@tensorflow/tfjs-core@4.22.0)(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(seedrandom@3.0.5)
       lucide-react:
         specifier: ^0.511.0
         version: 0.511.0(react@19.1.0)
@@ -1327,8 +1327,8 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
-  datakeen-session-react@1.0.10:
-    resolution: {integrity: sha512-MtljPh3S+46VmfTywVOSAkOCkRloE7o3RU0IQmGaoP6d75SibvuQqAgigZDGSfqiWMirFdhZnRb6ABjVE+UkuA==}
+  datakeen-session-react@1.0.18:
+    resolution: {integrity: sha512-qFQACJ2YLanAlTq4wqFUGB3WzVivWIAsF/o4K0GixRGUNqpQCpXTCQ+YHmDCgDOwshjoggIoiEXCBoTIdQmZZw==}
     peerDependencies:
       react: ^19.1.0
       react-dom: ^19.1.0
@@ -2184,6 +2184,9 @@ packages:
 
   tailwind-merge@3.3.0:
     resolution: {integrity: sha512-fyW/pEfcQSiigd5SNn0nApUOxx0zB/dm6UDU/rEwc2c3sX2smWUNbapHv+QRqLGVp9GWX3THIa7MUGPo+YkDzQ==}
+
+  tailwind-merge@3.3.1:
+    resolution: {integrity: sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==}
 
   tailwindcss@4.1.7:
     resolution: {integrity: sha512-kr1o/ErIdNhTz8uzAYL7TpaUuzKIE6QPQ4qmSdxnoX/lo+5wmUHQA6h3L5yIqEImSRnAAURDirLu/BgiXGPAhg==}
@@ -3570,7 +3573,7 @@ snapshots:
 
   csstype@3.1.3: {}
 
-  datakeen-session-react@1.0.10(@tensorflow/tfjs-converter@4.22.0(@tensorflow/tfjs-core@4.22.0))(@tensorflow/tfjs-core@4.22.0)(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(seedrandom@3.0.5):
+  datakeen-session-react@1.0.18(@tensorflow/tfjs-converter@4.22.0(@tensorflow/tfjs-core@4.22.0))(@tensorflow/tfjs-core@4.22.0)(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(seedrandom@3.0.5):
     dependencies:
       '@headlessui/react': 2.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-checkbox': 1.3.2(@types/react-dom@19.1.5(@types/react@19.1.4))(@types/react@19.1.4)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -3581,9 +3584,12 @@ snapshots:
       '@tensorflow/tfjs': 4.22.0(seedrandom@3.0.5)
       '@tensorflow/tfjs-backend-webgl': 4.22.0(@tensorflow/tfjs-core@4.22.0)
       '@unissey-web/sdk-react': 4.4.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      clsx: 2.1.1
       lucide-react: 0.511.0(react@19.1.0)
+      qrcode: 1.5.4
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
+      tailwind-merge: 3.3.1
     transitivePeerDependencies:
       - '@tensorflow/tfjs-converter'
       - '@tensorflow/tfjs-core'
@@ -4426,6 +4432,8 @@ snapshots:
   tabbable@6.2.0: {}
 
   tailwind-merge@3.3.0: {}
+
+  tailwind-merge@3.3.1: {}
 
   tailwindcss@4.1.7: {}
 
