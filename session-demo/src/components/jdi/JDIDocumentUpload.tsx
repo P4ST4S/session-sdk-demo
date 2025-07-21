@@ -4,10 +4,11 @@ import Button from "../ui/Button";
 import ButtonDesktop from "../ui/ButtonDesktop";
 import { Card } from "../ui/Card";
 import { Download } from "lucide-react";
+import type { onUploadFiles } from "../../types/uploadFiles";
 
 interface JDIDocumentUploadProps {
   documentType: string;
-  onUpload: () => void;
+  onUpload: (files: onUploadFiles) => void;
   onBack: () => void;
   documentTypeId?: string; // Pour identifier des types spécifiques comme jdd ou income-proof
 }
@@ -150,12 +151,13 @@ const JDIDocumentUpload = ({
     setIsUploading(true);
 
     try {
-      // Simulate upload delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const files = {
+        front: frontImage,
+        back: twoSidesRequired ? backImage : null,
+      };
+      console.log("JDIDocumentUpload: Uploading files", files);
 
-      // Here you would typically upload the images to your server
-
-      onUpload();
+      onUpload(files);
     } catch (err) {
       console.error("JDIDocumentUpload: Upload error:", err);
       setError(

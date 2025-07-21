@@ -80,6 +80,7 @@ const DatakeenSession = ({
   useEffect(() => {
     const loadSession = async () => {
       if (!sessionId) return;
+      localStorage.setItem("sessionId", sessionId);
 
       setLoading(true);
       try {

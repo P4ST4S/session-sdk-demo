@@ -94,6 +94,8 @@ export const fetchSessionById = async (
   sessionId: string
 ): Promise<SessionData> => {
   try {
+    console.log("baseURL:", API_BASE_URL);
+
     const response = await fetch(
       `${API_BASE_URL}/backend/session/sdk/${sessionId}`
     );

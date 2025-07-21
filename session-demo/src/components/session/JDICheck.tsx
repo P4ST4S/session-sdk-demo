@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { stepObject } from "../../types/session";
+import type { onUploadFiles } from "../../types/uploadFiles";
 import JDIIntroduction from "../jdi/JDIIntroduction";
 import JDIDocumentSelection from "../jdi/JDIDocumentSelection";
 import JDIDocumentUpload from "../jdi/JDIDocumentUpload";
@@ -24,13 +25,15 @@ const JDICheck = ({
   const [selectedDocumentType, setSelectedDocumentType] = useState<
     string | null
   >(null);
+  const [fileUploaded, setFileUploaded] = useState<onUploadFiles | null>(null);
 
   const handleDocumentTypeSelect = (documentType: string) => {
     setSelectedDocumentType(documentType);
     setJDIStep(2); // Go to document upload step
   };
 
-  const handleDocumentUpload = () => {
+  const handleDocumentUpload = (files: onUploadFiles) => {
+    setFileUploaded(files);
     // Start processing
     setJDIStep(3);
   };
@@ -105,6 +108,7 @@ const JDICheck = ({
         <JDIProcessing
           documentType={selectedDocumentType!}
           onProcessingComplete={handleProcessingComplete}
+          fileUploaded={fileUploaded}
         />
       );
     case 4:
