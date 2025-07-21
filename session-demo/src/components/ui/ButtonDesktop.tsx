@@ -25,7 +25,7 @@ const ButtonDesktop = ({
         </button>
       ) : (
         <button
-          className={`inline-flex h-9 items-center justify-center gap-2 shrink-0 cursor-pointer bg-transparent border-1 border-[#3C3C40] hover:bg-[#3c3c401e] text-[#3C3C40] border rounded-md ${className}`}
+          className={`inline-flex h-9 items-center justify-center gap-2 shrink-0 cursor-pointer bg-transparent border-1 border-[#3C3C40] hover:bg-[#3c3c401e] text-[#3C3C40] rounded-md ${className}`}
           onClick={onClick}
           disabled={disabled}
         >

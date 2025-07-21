@@ -7,6 +7,7 @@ import JDIProcessing from "../jdi/JDIProcessing";
 import JDISuccess from "../jdi/JDISuccess";
 import JDIError from "../jdi/JDIError";
 import { retrieveDocumentOptions } from "../../services/sessionService";
+import type { onUploadFiles } from "../../types/uploadFiles";
 
 interface DocumentCheckProps {
   stepObject: stepObject;
@@ -29,6 +30,7 @@ const DocumentCheck = ({
   const [selectedDocumentType, setSelectedDocumentType] = useState<
     string | null
   >(null);
+  const [fileUploaded, setFileUploaded] = useState<onUploadFiles | null>(null);
 
   // Initialize docStep
   useEffect(() => {
@@ -71,8 +73,9 @@ const DocumentCheck = ({
     setDocStep(2); // Go to document upload step
   };
 
-  const handleDocumentUpload = () => {
+  const handleDocumentUpload = (files: onUploadFiles) => {
     // Start processing
+    setFileUploaded(files);
     setDocStep(3);
   };
 
@@ -190,6 +193,7 @@ const DocumentCheck = ({
         <JDIProcessing
           documentType={selectedDocumentType!}
           onProcessingComplete={handleProcessingComplete}
+          fileUploaded={fileUploaded}
         />
       );
     case 4:
