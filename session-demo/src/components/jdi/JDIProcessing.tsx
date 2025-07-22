@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Title from "../ui/Title";
 import Subtitle from "../ui/Subtitle";
 import type { onUploadFiles } from "../../types/uploadFiles";
@@ -32,7 +32,12 @@ const JDIProcessing = ({
   const [hasError, setHasError] = useState(false);
   const [isDone, setIsDone] = useState(false);
 
+  const analysisStartedRef = useRef(false);
   useEffect(() => {
+    if (analysisStartedRef.current) return;
+    if (!fileUploaded) return;
+
+    analysisStartedRef.current = true;
     let isMounted = true;
     const processFiles = async () => {
       const sessionId = localStorage.getItem("sessionId");
@@ -42,28 +47,24 @@ const JDIProcessing = ({
         setIsDone(true);
         return;
       }
-
-      if (fileUploaded) {
-        try {
-          await analyzeFiles(
-            sessionId,
-            fileUploaded,
-            documentType,
-            null,
-            true,
-            true,
-            false
-          );
-          if (isMounted) setIsDone(true);
-          onProcessingComplete(true);
-        } catch (error) {
-          if (isMounted) setHasError(true);
-          if (isMounted) setIsDone(true);
-          onProcessingComplete(false);
-        }
+      try {
+        await analyzeFiles(
+          sessionId,
+          fileUploaded,
+          documentType,
+          null,
+          true,
+          true,
+          false
+        );
+        if (isMounted) setIsDone(true);
+        onProcessingComplete(true);
+      } catch (error) {
+        if (isMounted) setHasError(true);
+        if (isMounted) setIsDone(true);
+        onProcessingComplete(false);
       }
     };
-
     processFiles();
     return () => {
       isMounted = false;

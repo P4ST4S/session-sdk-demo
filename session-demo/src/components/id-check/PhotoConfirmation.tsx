@@ -4,6 +4,7 @@ import Title from "../ui/Title";
 import Subtitle from "../ui/Subtitle";
 import PhotoProcessingLoader from "./PhotoProcessingLoader";
 import ButtonDesktop from "../ui/ButtonDesktop";
+import type { onUploadFiles } from "../../types/uploadFiles";
 
 interface PhotoConfirmationProps {
   imageUrl: string;
@@ -12,6 +13,7 @@ interface PhotoConfirmationProps {
   onConfirm: () => void;
   onRetry: () => void;
   onRetryAfterProcessing: () => void;
+  fileUploaded: onUploadFiles | null;
 }
 
 const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
@@ -21,6 +23,7 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
   onConfirm,
   onRetry,
   onRetryAfterProcessing,
+  fileUploaded,
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -42,6 +45,7 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
       <PhotoProcessingLoader
         onProcessingComplete={handleProcessingComplete}
         onRetry={handleRetryAfterProcessing}
+        filesUploaded={fileUploaded}
       />
     );
   }

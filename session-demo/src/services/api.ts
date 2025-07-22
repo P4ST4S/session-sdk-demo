@@ -41,7 +41,6 @@ export class ApiService {
       baseURL: config.baseURL,
       timeout: config.timeout || 30000,
       headers: {
-        "Content-Type": "application/json",
         Accept: "application/json",
         ...config.headers,
       },
@@ -117,39 +116,14 @@ export class ApiService {
     return apiError;
   }
 
-  private async retryRequest<T>(
-    requestFn: () => Promise<AxiosResponse<T>>,
-    attempts: number = this.config.retryAttempts || 3,
-    delay: number = this.config.retryDelay || 1000
-  ): Promise<AxiosResponse<T>> {
-    try {
-      return await requestFn();
-    } catch (error) {
-      if (attempts > 1 && this.shouldRetry(error as AxiosError)) {
-        await this.delay(delay);
-        return this.retryRequest(requestFn, attempts - 1, delay * 2);
-      }
-      throw error;
-    }
-  }
-
-  private shouldRetry(error: AxiosError): boolean {
-    // Retry sur les erreurs réseau et les erreurs 5xx
-    return !error.response || error.response.status >= 500;
-  }
-
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  // Plus de retryRequest, shouldRetry, ni delay : chaque appel Axios ne sera fait qu'une seule fois
 
   // Méthodes publiques pour les requêtes HTTP
   async get<T = any>(
     url: string,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
-    const response = await this.retryRequest(() =>
-      this.client.get<T>(url, config)
-    );
+    const response = await this.client.get<T>(url, config);
     return {
       data: response.data,
       success: true,
@@ -162,9 +136,8 @@ export class ApiService {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
-    const response = await this.retryRequest(() =>
-      this.client.post<T>(url, data, config)
-    );
+    console.log("API POST method called", url, data);
+    const response = await this.client.post<T>(url, data, config);
     return {
       data: response.data,
       success: true,
@@ -177,9 +150,7 @@ export class ApiService {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
-    const response = await this.retryRequest(() =>
-      this.client.put<T>(url, data, config)
-    );
+    const response = await this.client.put<T>(url, data, config);
     return {
       data: response.data,
       success: true,
@@ -192,9 +163,7 @@ export class ApiService {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
-    const response = await this.retryRequest(() =>
-      this.client.patch<T>(url, data, config)
-    );
+    const response = await this.client.patch<T>(url, data, config);
     return {
       data: response.data,
       success: true,
@@ -206,9 +175,7 @@ export class ApiService {
     url: string,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
-    const response = await this.retryRequest(() =>
-      this.client.delete<T>(url, config)
-    );
+    const response = await this.client.delete<T>(url, config);
     return {
       data: response.data,
       success: true,
@@ -244,8 +211,7 @@ export const createApiService = (config: ApiConfig): ApiService => {
 // Instance par défaut (à configurer selon vos besoins)
 export const apiService = createApiService({
   baseURL:
-    process.env.VITE_API_BASE_URL || "http://localhost:8888/backend/session",
+    import.meta.env.VITE_API_BASE_URL ||
+    "http://localhost:8888/backend/session/sdk",
   timeout: 30000,
-  retryAttempts: 3,
-  retryDelay: 1000,
 });

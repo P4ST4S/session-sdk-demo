@@ -84,10 +84,8 @@ export async function analyzeFiles(
   );
 
   try {
-    const response = await apiService.post(
-      `/backend/session/${sessionId}/analysis`,
-      formData
-    );
+    console.log("CALL apiService.post", `/${sessionId}/analysis`, formData);
+    const response = await apiService.post(`/${sessionId}/analysis`, formData);
     if (!response.success) {
       throw new Error(`Analysis failed: ${response.data}`);
     }

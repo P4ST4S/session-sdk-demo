@@ -4,17 +4,21 @@ import Subtitle from "../ui/Subtitle";
 import Button from "../ui/Button";
 import type { ProcessingStep } from "../../types/session";
 import { DEFAULT_PROCESSING_STEPS } from "../../utils/stepsAnalysis";
+import type { onUploadFiles } from "../../types/uploadFiles";
+import { analyzeFiles } from "../../services/analysis";
 
 interface PhotoProcessingLoaderProps {
   onProcessingComplete: () => void;
   onRetry?: () => void;
   steps?: ProcessingStep[];
+  filesUploaded: onUploadFiles | null;
 }
 
 const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
   onProcessingComplete,
   onRetry,
   steps = DEFAULT_PROCESSING_STEPS,
+  filesUploaded,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(true);
@@ -23,23 +27,48 @@ const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
   const hasErrorInSteps = steps.some((step) => step.hasError);
 
   useEffect(() => {
-    const totalSteps = steps.length;
-
-    // If we've completed all steps, call onProcessingComplete
-    if (currentStep >= totalSteps) {
-      setIsProcessing(false);
-      if (!hasErrorInSteps) {
-        onProcessingComplete();
+    let isMounted = true;
+    const processSteps = async () => {
+      const sessionId = localStorage.getItem("sessionId");
+      if (!sessionId) {
+        console.error("Session ID not found in local storage");
+        if (isMounted) {
+          setIsProcessing(false);
+          onProcessingComplete();
+        }
+        return;
       }
-      return;
-    }
 
-    // Move to next step after 1.5 seconds
-    const timer = setTimeout(() => {
-      setCurrentStep((prev) => prev + 1);
-    }, 1500);
+      if (filesUploaded) {
+        try {
+          await analyzeFiles(
+            sessionId,
+            filesUploaded,
+            "id",
+            null,
+            true,
+            true,
+            false
+          );
+          if (isMounted) {
+            setCurrentStep(steps.length);
+            setIsProcessing(false);
+            onProcessingComplete();
+          }
+        } catch (error) {
+          console.error("Error analyzing files:", error);
+          if (isMounted) {
+            setIsProcessing(false);
+            onProcessingComplete();
+          }
+        }
+      }
+    };
+    processSteps();
 
-    return () => clearTimeout(timer);
+    return () => {
+      isMounted = false;
+    };
   }, [currentStep, onProcessingComplete]);
 
   return (

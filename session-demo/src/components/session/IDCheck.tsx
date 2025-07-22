@@ -8,6 +8,7 @@ import { cameraService } from "../../services/cameraService";
 import { useDocumentContext } from "../../context/DocumentContext";
 import { documentTypesFromCountryId } from "../../utils/jdiCountry";
 import JDIDocumentSelection from "../jdi/JDIDocumentSelection";
+import type { onUploadFiles } from "../../types/uploadFiles";
 
 interface IDCheckProps {
   stepObject: stepObject;
@@ -27,6 +28,11 @@ const IDCheck = ({
   const [capturedVersoImage, setCapturedVersoImage] = useState<string | null>(
     null
   );
+  // Nouveau state pour stocker les fichiers comme dans JDICheck
+  const [filesUploaded, setFilesUploaded] = useState<onUploadFiles>({
+    front: null,
+    back: null,
+  });
   const [requiresTwoSides, setRequiresTwoSides] = useState(false);
 
   // Use the context to get the selected document and the setter
@@ -113,34 +119,21 @@ const IDCheck = ({
 
   const onCaptureRecto = (image: string) => {
     setCapturedRectoImage(image);
-
-    // Routing logic based on whether the document requires two sides
+    setFilesUploaded((prev) => ({ ...prev, front: image }));
     if (requiresTwoSides) {
-      // If two sides are required, go to the instruction screen for verso capture
-      setInternalStep(2); // Go to the "turn document" screen
+      setInternalStep(2);
     } else {
-      // For single-sided documents (like passports), skip verso capture
-      setInternalStep(4); // Skip directly to confirmation
+      setInternalStep(4);
     }
   };
 
   const onCaptureVerso = (image: string) => {
     setCapturedVersoImage(image);
-    setInternalStep(4); // Go to confirmation after capturing the verso
+    setFilesUploaded((prev) => ({ ...prev, back: image }));
+    setInternalStep(4);
   };
 
   const handleConfirm = () => {
-    // Prepare images to send based on document type
-    const imagesToSend = {
-      recto: capturedRectoImage,
-      // Only include verso if the document has two sides and the image has been captured
-      ...(requiresTwoSides && capturedVersoImage
-        ? { verso: capturedVersoImage }
-        : {}),
-    };
-
-    console.log("Images confirmed:", imagesToSend);
-
     // Make sure the camera is properly stopped
     cameraService.stopCamera();
 
@@ -219,6 +212,7 @@ const IDCheck = ({
           onConfirm={handleConfirm}
           onRetry={handleRetry}
           onRetryAfterProcessing={handleRetryAfterProcessing}
+          fileUploaded={filesUploaded}
         />
       )}
     </>
