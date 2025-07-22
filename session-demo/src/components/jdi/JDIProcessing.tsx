@@ -8,6 +8,7 @@ interface JDIProcessingProps {
   onProcessingComplete: (success: boolean) => void;
   documentType: string;
   fileUploaded: onUploadFiles | null;
+  documentTypeId: string;
 }
 
 const processingSteps = [
@@ -27,6 +28,7 @@ const JDIProcessing = ({
   onProcessingComplete,
   documentType,
   fileUploaded,
+  documentTypeId,
 }: JDIProcessingProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasError, setHasError] = useState(false);
@@ -51,9 +53,9 @@ const JDIProcessing = ({
         await analyzeFiles(
           sessionId,
           fileUploaded,
-          documentType,
+          documentTypeId,
           null,
-          true,
+          false, // finish the session if true
           true,
           false
         );

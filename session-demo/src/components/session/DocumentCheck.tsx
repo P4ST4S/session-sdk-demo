@@ -13,7 +13,7 @@ interface DocumentCheckProps {
   stepObject: stepObject;
   sessionId: string;
   onContinueOnPC?: () => void;
-  documentTypeId?: string; // ID du type de document (id-card, jdd, income-proof, etc.)
+  documentTypeId: string; // ID du type de document (id-card, jdd, income-proof, etc.)
 }
 
 /**
@@ -194,6 +194,7 @@ const DocumentCheck = ({
           documentType={selectedDocumentType!}
           onProcessingComplete={handleProcessingComplete}
           fileUploaded={fileUploaded}
+          documentTypeId={documentTypeId}
         />
       );
     case 4:
