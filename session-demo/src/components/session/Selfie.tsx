@@ -28,6 +28,11 @@ const Selfie = ({ stepObject }: { stepObject: stepObject }) => {
     setInternalStep(0);
   };
 
+  const handleBackToParent = () => {
+    // Retourner à l'étape précédente du flow principal
+    stepObject.setStep(stepObject.step - 1);
+  };
+
   return (
     <div
       className={`h-full w-full transition-opacity duration-500 ${
@@ -35,7 +40,11 @@ const Selfie = ({ stepObject }: { stepObject: stepObject }) => {
       }`}
     >
       {internalStep === 0 && (
-        <Video setSelfieData={setSelfieData} setStep={setInternalStep} />
+        <Video
+          setSelfieData={setSelfieData}
+          setStep={setInternalStep}
+          onBack={handleBackToParent}
+        />
       )}
       {internalStep === 1 && selfieData && (
         <SelfieConfirmation

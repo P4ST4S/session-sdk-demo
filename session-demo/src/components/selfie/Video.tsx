@@ -8,9 +8,10 @@ import VideoResetStyles from "./VideoResetStyles";
 interface VideoProps {
   setSelfieData: (selfieData: SelfieCaptureData) => void;
   setStep: (step: number) => void;
+  onBack?: () => void;
 }
 
-const Video = ({ setSelfieData, setStep }: VideoProps) => {
+const Video = ({ setSelfieData, setStep, onBack }: VideoProps) => {
   // Effet pour ajouter la classe au body lorsque le composant est monté
   useEffect(() => {
     // Empêcher le scroll sur le body lorsque la capture est active
@@ -40,7 +41,7 @@ const Video = ({ setSelfieData, setStep }: VideoProps) => {
   return (
     <div className="w-full h-full overflow-hidden flex flex-col">
       <VideoResetStyles />
-      <SelfieFlow handleSelfie={handleSelfie} />
+      <SelfieFlow handleSelfie={handleSelfie} onBack={onBack} />
     </div>
   );
 };

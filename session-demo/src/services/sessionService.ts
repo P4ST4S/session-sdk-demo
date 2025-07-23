@@ -394,6 +394,45 @@ export const updateSessionContactInfo = async (
 };
 
 /**
+ * Updates session status
+ *
+ * @param sessionId - The unique identifier of the session
+ * @param status - The new status for the session
+ * @returns The updated session data
+ */
+export const updateSessionStatus = async (
+  sessionId: string,
+  status: string
+): Promise<SessionData> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/backend/session/sdk/${sessionId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to update session status: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error updating session status:", error);
+    throw error;
+  }
+};
+
+/**
  * Gets the workflow steps from the template in order
  *
  * @param template - The session template

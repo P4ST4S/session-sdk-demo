@@ -38,19 +38,20 @@ const getDocumentLabel = (documentType: string, documentTypeId?: string) => {
 };
 
 const requiresTwoSides = (documentType: string, documentTypeId?: string) => {
-  // Les justificatifs spéciaux n'ont généralement qu'une face
+  // Les justificatifs spéciaux (jdd, income-proof) n'ont qu'une seule face
   if (documentTypeId === "jdd" || documentTypeId === "income-proof") {
     return false;
   }
 
-  // Pour les documents d'identité, vérifier en fonction du type
+  // Pour les documents d'identité, seuls certains types nécessitent recto et verso
   switch (documentType) {
     case "national_id":
     case "driving_license":
-      return true;
+      return true; // Carte d'identité et permis ont recto et verso
     case "passport":
+      return false; // Le passeport n'a qu'une page avec photo
     default:
-      return false;
+      return false; // Par défaut, pas de verso
   }
 };
 

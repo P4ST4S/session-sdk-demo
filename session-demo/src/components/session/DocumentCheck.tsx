@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import type { stepObject } from "../../types/session";
+import JDIPreIntroduction from "../jdi/JDIPreIntroduction";
 import JDIIntroduction from "../jdi/JDIIntroduction";
 import JDIDocumentSelection from "../jdi/JDIDocumentSelection";
 import JDIDocumentUpload from "../jdi/JDIDocumentUpload";
@@ -70,25 +71,25 @@ const DocumentCheck = ({
 
   const handleDocumentTypeSelect = (documentType: string) => {
     setSelectedDocumentType(documentType);
-    setDocStep(2); // Go to document upload step
+    setDocStep(3); // Go to document upload step
   };
 
   const handleDocumentUpload = (files: onUploadFiles) => {
     // Start processing
     setFileUploaded(files);
-    setDocStep(3);
+    setDocStep(4);
   };
 
   const handleProcessingComplete = (success: boolean) => {
     if (success) {
-      setDocStep(4); // Go to success screen
+      setDocStep(5); // Go to success screen
     } else {
-      setDocStep(5); // Go to error screen
+      setDocStep(6); // Go to error screen
     }
   };
 
   const handleRetryFromError = () => {
-    setDocStep(2); // Go back to document upload
+    setDocStep(3); // Go back to document upload
   };
 
   const handleContactSupport = () => {
@@ -139,14 +140,22 @@ const DocumentCheck = ({
       }
 
       return (
-        <JDIIntroduction
-          sessionId={sessionId}
+        <JDIPreIntroduction
           documentTypeId={documentTypeId}
           onContinue={() => setDocStep(1)}
           onBack={handleBack}
         />
       );
     case 1:
+      return (
+        <JDIIntroduction
+          sessionId={sessionId}
+          documentTypeId={documentTypeId}
+          onContinue={() => setDocStep(2)}
+          onBack={handleBack}
+        />
+      );
+    case 2:
       return (
         <JDIDocumentSelection
           onDocumentSelect={handleDocumentTypeSelect}
@@ -155,7 +164,7 @@ const DocumentCheck = ({
           sessionId={sessionId}
         />
       );
-    case 2:
+    case 3:
       if (!selectedDocumentType) {
         console.error(
           "DocumentCheck: selectedDocumentType is null for JDIDocumentUpload!"
@@ -172,7 +181,7 @@ const DocumentCheck = ({
             </p>
             <button
               className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark transition-colors"
-              onClick={() => setDocStep(1)}
+              onClick={() => setDocStep(2)}
             >
               Retour à la sélection
             </button>
@@ -188,7 +197,7 @@ const DocumentCheck = ({
           onBack={handleBack}
         />
       );
-    case 3:
+    case 4:
       return (
         <JDIProcessing
           documentType={selectedDocumentType!}
@@ -197,14 +206,14 @@ const DocumentCheck = ({
           documentTypeId={documentTypeId}
         />
       );
-    case 4:
+    case 5:
       return (
         <JDISuccess
           documentType={selectedDocumentType!}
           onContinue={handleSuccessContinue}
         />
       );
-    case 5:
+    case 6:
       return (
         <JDIError
           documentType={selectedDocumentType!}

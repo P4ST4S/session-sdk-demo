@@ -185,7 +185,24 @@ const DatakeenSession = ({
 
           // Check if we have a saved step in localStorage
           const savedStep = localStorage.getItem(`currentStep_${sessionId}`);
-          if (savedStep) {
+
+          // Vérifier si la session est déjà terminée
+          if (sessionData.status === "ended") {
+            // Si la session est terminée, aller directement à l'étape de fin
+            // Trouver l'étape correspondant au nœud "end" ou utiliser une étape par défaut
+            const templateNodes = sessionData.template?.nodes || [];
+            const endNodeIndex = templateNodes.findIndex(
+              (node) => node.type === "end"
+            );
+
+            if (endNodeIndex !== -1) {
+              // +4 car les 4 premières étapes sont fixes (welcome, user-input, contact-info, otp)
+              setStep(4 + endNodeIndex);
+            } else {
+              // Si pas de nœud "end" spécifique, créer une étape de fin virtuelle
+              setStep(4 + templateNodes.length);
+            }
+          } else if (savedStep) {
             try {
               const stepNumber = parseInt(savedStep, 10);
               setStep(stepNumber);
@@ -379,13 +396,24 @@ const DatakeenSession = ({
       );
     }
 
+    // Vérifier si la session est terminée avant de rendre les nœuds
+    if (session.status === "ended") {
+      return <EndFlow stepObject={stepObject} sessionId={sessionId} />;
+    }
+
     // Utiliser la fonction getOrderedWorkflowSteps pour obtenir les nœuds triés et filtrés
     const templateNodes = getOrderedWorkflowSteps(session.template);
 
     // Vérifier si l'index est valide
     if (templateNodes.length === 0) {
       console.warn("No valid template nodes found after filtering");
-      return <EndFlow stepObject={stepObject} />;
+      return (
+        <EndFlow
+          stepObject={stepObject}
+          sessionId={sessionId}
+          sessionStatus={session?.status}
+        />
+      );
     }
 
     if (templateIndex < 0 || templateIndex >= templateNodes.length) {
@@ -398,7 +426,13 @@ const DatakeenSession = ({
       // Si nous sommes au-delà de l'index maximum, cela signifie que nous avons terminé tous les nœuds
       // Afficher un écran de succès
       if (templateIndex >= templateNodes.length) {
-        return <EndFlow stepObject={stepObject} />;
+        return (
+          <EndFlow
+            stepObject={stepObject}
+            sessionId={sessionId}
+            sessionStatus={session?.status}
+          />
+        );
       }
 
       // Si l'index est négatif, rediriger vers l'étape précédente
@@ -443,7 +477,13 @@ const DatakeenSession = ({
     // Déterminer quel composant afficher en fonction du type de nœud
     switch (node.type) {
       case "end":
-        return <EndFlow stepObject={stepObject} />;
+        return (
+          <EndFlow
+            stepObject={stepObject}
+            sessionId={sessionId}
+            sessionStatus={session?.status}
+          />
+        );
       case "document-selection":
         if (!node.requiredDocumentType) {
           console.error(
@@ -626,80 +666,91 @@ const DatakeenSession = ({
               <SessionExpired onRetry={handleRetrySession} />
             ) : (
               <>
-                {step === 0 && <StartSession stepObject={stepObject} />}
-                {step === 1 &&
-                session?.template &&
-                hasSelfieCaptureStep(session.template) &&
-                session.mobile ? (
-                  <MobileRedirect
+                {/* Vérification spéciale : Si la session est terminée, afficher directement EndFlow */}
+                {session?.status === "ended" ? (
+                  <EndFlow
+                    stepObject={stepObject}
                     sessionId={sessionId}
-                    onBack={() => setStep(0)}
-                    onContinueOnPC={() => {
-                      // Continue with PC flow, skip mobile redirect
-                      setStep(2);
-                      // Force PC mode by not redirecting to mobile
-                    }}
+                    sessionStatus={session.status}
                   />
-                ) : step === 1 ? (
-                  <UserInputForm
-                    stepObject={stepObject}
-                    setUserInput={setUserInput}
-                    initialUserInput={userInput}
-                  />
-                ) : null}
-                {step === 2 && (
-                  <ContactInfoForm
-                    stepObject={stepObject}
-                    setContactInfo={setContactInfo}
-                    initialContactInfo={contactInfo}
-                  />
-                )}
-                {step === 3 && (
-                  <OTPVerification
-                    stepObject={stepObject}
-                    contactInfo={contactInfo}
-                  />
-                )}
+                ) : (
+                  <>
+                    {step === 0 && <StartSession stepObject={stepObject} />}
+                    {step === 1 &&
+                    session?.template &&
+                    hasSelfieCaptureStep(session.template) &&
+                    session.mobile ? (
+                      <MobileRedirect
+                        sessionId={sessionId}
+                        onBack={() => setStep(0)}
+                        onContinueOnPC={() => {
+                          // Continue with PC flow, skip mobile redirect
+                          setStep(2);
+                          // Force PC mode by not redirecting to mobile
+                        }}
+                      />
+                    ) : step === 1 ? (
+                      <UserInputForm
+                        stepObject={stepObject}
+                        setUserInput={setUserInput}
+                        initialUserInput={userInput}
+                      />
+                    ) : null}
+                    {step === 2 && (
+                      <ContactInfoForm
+                        stepObject={stepObject}
+                        setContactInfo={setContactInfo}
+                        initialContactInfo={contactInfo}
+                      />
+                    )}
+                    {step === 3 && (
+                      <OTPVerification
+                        stepObject={stepObject}
+                        contactInfo={contactInfo}
+                      />
+                    )}
 
-                {/* À partir de l'étape 4, utiliser la logique dynamique basée sur le template */}
-                {step >= 4 && !loading ? (
-                  session?.template ? (
-                    renderTemplateNode(step - 4)
-                  ) : (
-                    // Fallback pour l'étape 4+ si le template n'est pas disponible
-                    <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
-                      <h2 className="text-xl font-bold text-gray-700 mb-2">
-                        Préparation des étapes de vérification
-                      </h2>
-                      <p className="text-gray-600 mb-4">
-                        Un instant s'il vous plaît...
-                      </p>
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4 max-w-xs mx-auto">
-                        <p className="text-sm text-blue-600">
-                          Configuration des prochaines étapes en cours...
+                    {/* À partir de l'étape 4, utiliser la logique dynamique basée sur le template */}
+                    {step >= 4 && !loading ? (
+                      session?.template ? (
+                        renderTemplateNode(step - 4)
+                      ) : (
+                        // Fallback pour l'étape 4+ si le template n'est pas disponible
+                        <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+                          <h2 className="text-xl font-bold text-gray-700 mb-2">
+                            Préparation des étapes de vérification
+                          </h2>
+                          <p className="text-gray-600 mb-4">
+                            Un instant s'il vous plaît...
+                          </p>
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4 max-w-xs mx-auto">
+                            <p className="text-sm text-blue-600">
+                              Configuration des prochaines étapes en cours...
+                            </p>
+                            <button
+                              onClick={() => window.location.reload()}
+                              className="mt-2 px-3 py-1 bg-blue-600 text-white text-xs rounded"
+                            >
+                              Actualiser si nécessaire
+                            </button>
+                          </div>
+                        </div>
+                      )
+                    ) : step >= 4 ? (
+                      // Affiche un loader pendant le chargement à l'étape 4+
+                      <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+                        <div className="animate-spin rounded-full h-16 w-16 border-t-3 border-b-3 border-primary mb-4"></div>
+                        <h2 className="text-xl font-bold text-gray-700 mb-2 animate-pulse">
+                          Chargement en cours
+                        </h2>
+                        <p className="text-gray-600 mb-4">
+                          Préparation des documents à vérifier...
                         </p>
-                        <button
-                          onClick={() => window.location.reload()}
-                          className="mt-2 px-3 py-1 bg-blue-600 text-white text-xs rounded"
-                        >
-                          Actualiser si nécessaire
-                        </button>
                       </div>
-                    </div>
-                  )
-                ) : step >= 4 ? (
-                  // Affiche un loader pendant le chargement à l'étape 4+
-                  <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-3 border-b-3 border-primary mb-4"></div>
-                    <h2 className="text-xl font-bold text-gray-700 mb-2 animate-pulse">
-                      Chargement en cours
-                    </h2>
-                    <p className="text-gray-600 mb-4">
-                      Préparation des documents à vérifier...
-                    </p>
-                  </div>
-                ) : null}
+                    ) : null}
+                  </>
+                )}
 
                 {isMobile && (
                   <div className="pb-4">
