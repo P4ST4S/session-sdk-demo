@@ -23,3 +23,28 @@ export function getMimeTypeFromDataURL(dataurl: string): string | null {
   const match = dataurl.match(/^data:(.*?);/);
   return match ? match[1] : null;
 }
+
+export // Map conformity code to the corresponding step index
+const codeToStep = (code: string): number => {
+  if (code === "1.0") {
+    return 4; // Conform
+  }
+  if (code.includes("2")) {
+    // Document not readable
+    return 1;
+  }
+  if (
+    code.includes("3") ||
+    code.includes("4") ||
+    code.includes("5") ||
+    code.includes("8")
+  ) {
+    // Document does not correspond to user input
+    return 2;
+  }
+  if (code.includes("7")) {
+    // Document not valid
+    return 3;
+  }
+  return 0; // Default to generic error
+};

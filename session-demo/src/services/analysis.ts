@@ -99,7 +99,7 @@ export async function analyzeFiles(
   save: boolean = true,
   incrementAnalysis: boolean = true,
   forceUpload: boolean = false
-): Promise<void> {
+): Promise<any> {
   const formData = await launchAnalysis(
     sessionId,
     files,
@@ -115,7 +115,8 @@ export async function analyzeFiles(
     if (!response.success) {
       throw new Error(`Analysis failed: ${response.data}`);
     }
-    console.log("Analysis launched successfully:", response.data);
+
+    return response.data;
   } catch (error) {
     console.error("Error launching analysis:", error);
     throw error;

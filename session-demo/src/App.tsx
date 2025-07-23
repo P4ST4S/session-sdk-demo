@@ -2,7 +2,7 @@ import useSession from "./hooks/useSession";
 // import useSession from "datakeen-session-react";
 
 function App() {
-  const { SessionComponent } = useSession("5b6875b470a0292aada8d398");
+  const { SessionComponent } = useSession("22f5a48b1a1008b684379291");
   return <div>{SessionComponent}</div>;
 }
 
