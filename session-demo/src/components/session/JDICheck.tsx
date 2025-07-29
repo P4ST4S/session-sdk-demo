@@ -115,6 +115,7 @@ const JDICheck = ({
           onProcessingComplete={handleProcessingComplete}
           fileUploaded={fileUploaded}
           onRetake={onRetake}
+          documentTypeId="jdd"
         />
       );
     case 4:
