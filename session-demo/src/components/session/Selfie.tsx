@@ -3,6 +3,7 @@ import type { stepObject } from "../../types/session";
 import Video from "../selfie/Video";
 import SelfieConfirmation from "../selfie/SelfieConfirmation";
 import type { SelfieCaptureData } from "../../types/selfie";
+import SelfieProcessing from "../selfie/selfie-flow/SelfieProcessing";
 
 /**
  * Composant de gestion du flux selfie.
@@ -19,9 +20,20 @@ const Selfie = ({ stepObject }: { stepObject: stepObject }) => {
 
     // Attendre un peu pour l'animation avant de passer à l'étape suivante
     setTimeout(() => {
-      stepObject.setStep(stepObject.step + 1);
+      setInternalStep(2); // Passer à l'étape de traitement du selfie
       setIsTransitioning(false);
     }, 500);
+  };
+
+  const selfieProcessed = (processed: boolean) => {
+    // Callback pour indiquer que le selfie a été traité
+    if (processed) {
+      stepObject.setStep(stepObject.step + 1);
+    }
+  };
+
+  const onRetake = () => {
+    setInternalStep(0);
   };
 
   const handleRetakeSelfie = () => {
@@ -51,6 +63,13 @@ const Selfie = ({ stepObject }: { stepObject: stepObject }) => {
           selfieData={selfieData}
           onConfirm={handleConfirmSelfie}
           onRetake={handleRetakeSelfie}
+        />
+      )}
+      {internalStep === 2 && selfieData && (
+        <SelfieProcessing
+          onProcessingComplete={selfieProcessed}
+          selfieFile={selfieData}
+          onRetake={onRetake}
         />
       )}
     </div>

@@ -75,6 +75,11 @@ const JDICheck = ({
     }
   };
 
+  const onRetake = () => {
+    setFileUploaded(null);
+    setJDIStep(2); // Revenir à l'étape de téléchargement du document
+  };
+
   switch (JDIStep) {
     case 0:
       return (
@@ -109,6 +114,7 @@ const JDICheck = ({
           documentType={selectedDocumentType!}
           onProcessingComplete={handleProcessingComplete}
           fileUploaded={fileUploaded}
+          onRetake={onRetake}
         />
       );
     case 4:

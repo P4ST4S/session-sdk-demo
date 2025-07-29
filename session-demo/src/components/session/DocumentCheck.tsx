@@ -117,6 +117,12 @@ const DocumentCheck = ({
     }
   };
 
+  const onRetake = () => {
+    setDocStep(2); // Go back to document selection
+    setSelectedDocumentType(null);
+    setFileUploaded(null);
+  };
+
   switch (docStep) {
     case 0:
       // If documentTypeId is missing, show error screen
@@ -204,6 +210,7 @@ const DocumentCheck = ({
           onProcessingComplete={handleProcessingComplete}
           fileUploaded={fileUploaded}
           documentTypeId={documentTypeId}
+          onRetake={onRetake}
         />
       );
     case 5:

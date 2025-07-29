@@ -2,6 +2,7 @@ import type { onUploadFiles } from "../types/uploadFiles";
 import { dataURLtoFile, getMimeTypeFromDataURL } from "./utils";
 import { mimeTypeToExtension } from "../utils/mimeTypes";
 import { apiService } from "./api";
+import type { SelfieCaptureData } from "../types/selfie";
 
 function createFileName(fileURL: string, prefix: string = "file") {
   const mimeType = getMimeTypeFromDataURL(fileURL);
@@ -111,7 +112,10 @@ export async function analyzeFiles(
   );
 
   try {
-    const response = await apiService.post(`/${sessionId}/analysis`, formData);
+    const response = await apiService.post(
+      `/sdk/${sessionId}/analysis`,
+      formData
+    );
     if (!response.success) {
       throw new Error(`Analysis failed: ${response.data}`);
     }
@@ -119,6 +123,29 @@ export async function analyzeFiles(
     return response.data;
   } catch (error) {
     console.error("Error launching analysis:", error);
+    throw error;
+  }
+}
+
+export async function analyzeSelfie(
+  sessionId: string,
+  selfieFile: SelfieCaptureData
+): Promise<any> {
+  const formData = new FormData();
+  formData.append("file", selfieFile.media, "selfie.mp4");
+
+  try {
+    const response = await apiService.post(
+      `unissey/${sessionId}/analyze`,
+      formData
+    );
+    if (!response.success) {
+      throw new Error(`Selfie analysis failed: ${response.data}`);
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Error launching selfie analysis:", error);
     throw error;
   }
 }

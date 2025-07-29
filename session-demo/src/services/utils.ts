@@ -26,6 +26,7 @@ export function getMimeTypeFromDataURL(dataurl: string): string | null {
 
 export // Map conformity code to the corresponding step index
 const codeToStep = (code: string): number => {
+  if (!code) return 0; // Default to generic error if no code is provided
   if (code === "1.0") {
     return 4; // Conform
   }

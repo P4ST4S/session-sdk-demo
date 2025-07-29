@@ -1,15 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import Title from "../ui/Title";
-import Subtitle from "../ui/Subtitle";
-import type { onUploadFiles } from "../../types/uploadFiles";
-import { analyzeFiles } from "../../services/analysis";
-import { codeToStep } from "../../services/utils";
+import Title from "../../ui/Title";
+import Subtitle from "../../ui/Subtitle";
+import { codeToStep } from "../../../services/utils";
+import type { SelfieCaptureData } from "../../../types/selfie";
+import { analyzeSelfie } from "../../../services/analysis";
 
-interface JDIProcessingProps {
+interface SelfieProcessingProps {
   onProcessingComplete: (success: boolean) => void;
-  documentType: string;
-  fileUploaded: onUploadFiles | null;
-  documentTypeId: string;
+  selfieFile: SelfieCaptureData | null;
   onRetake: () => void;
 }
 
@@ -25,13 +23,11 @@ const processingSteps = [
   { title: "Vérification de sécurité", subtitle: "Contrôle d'authenticité" },
   { title: "Finalisation", subtitle: "Traitement en cours..." },
 ];
-const JDIProcessing = ({
+const SelfieProcessing = ({
   onProcessingComplete,
-  documentType,
-  fileUploaded,
-  documentTypeId,
+  selfieFile,
   onRetake,
-}: JDIProcessingProps) => {
+}: SelfieProcessingProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasError, setHasError] = useState(false);
   const [isDone, setIsDone] = useState(false);
@@ -41,7 +37,7 @@ const JDIProcessing = ({
   useEffect(() => {
     // Prevent multiple analysis runs
     if (analysisStartedRef.current) return;
-    if (!fileUploaded) return;
+    if (!selfieFile) return;
 
     analysisStartedRef.current = true;
     const processFiles = async () => {
@@ -53,15 +49,7 @@ const JDIProcessing = ({
         return;
       }
       try {
-        const response: any = await analyzeFiles(
-          sessionId,
-          fileUploaded,
-          documentTypeId,
-          null,
-          false, // finish the session if true
-          true,
-          false
-        );
+        const response = await analyzeSelfie(sessionId, selfieFile);
         console.log("Analysis response:", response);
         setConformityCode(
           response?.data?.analysisResult?.job_status?.predictions?.[0]?.code ||
@@ -75,7 +63,7 @@ const JDIProcessing = ({
       }
     };
     processFiles();
-  }, [onProcessingComplete, documentType, fileUploaded]);
+  }, [onProcessingComplete, selfieFile]);
 
   useEffect(() => {
     // While analysis is not finished, stay at step 0
@@ -105,20 +93,6 @@ const JDIProcessing = ({
     return () => clearInterval(interval);
   }, [onProcessingComplete, hasError, isDone, conformityCode]);
 
-  // Get the label for the document type
-  const getDocumentLabel = (documentType: string) => {
-    switch (documentType) {
-      case "national_id":
-        return "carte nationale d'identité";
-      case "passport":
-        return "passeport";
-      case "driving_license":
-        return "permis de conduire";
-      default:
-        return "document";
-    }
-  };
-
   return (
     <div className="flex flex-col justify-between h-full w-full">
       <div className="flex-1 px-4 py-6 pt-11 md:px-8 md:py-8">
@@ -130,9 +104,7 @@ const JDIProcessing = ({
             <Subtitle className="text-sm text-gray-600 leading-relaxed">
               {hasError
                 ? "Une erreur est survenue lors de l'analyse du document. Veuillez réessayer."
-                : `Nous analysons votre ${getDocumentLabel(
-                    documentType
-                  )}. Cela peut prendre quelques instants.`}
+                : `Nous analysons votre selfie. Cela peut prendre quelques instants.`}
             </Subtitle>
           </div>
 
@@ -224,4 +196,4 @@ const JDIProcessing = ({
   );
 };
 
-export default JDIProcessing;
+export default SelfieProcessing;

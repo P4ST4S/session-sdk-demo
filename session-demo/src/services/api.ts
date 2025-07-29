@@ -212,6 +212,6 @@ export const createApiService = (config: ApiConfig): ApiService => {
 export const apiService = createApiService({
   baseURL:
     import.meta.env.VITE_API_BASE_URL ||
-    "http://localhost:8888/backend/session/sdk",
+    "http://localhost:8888/backend/session",
   timeout: 30000,
 });

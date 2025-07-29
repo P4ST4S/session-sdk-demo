@@ -1,9 +1,7 @@
-import { FR, VideoRecordDirections } from "@unissey-web/sdk-react";
 import "../Video.css";
 import Button from "../../ui/Button";
 import Title from "../../ui/Title";
 import Subtitle from "../../ui/Subtitle";
-import PoweredBy from "../../ui/PoweredBy";
 
 interface InstructionsSelfieProps {
   setStep: (step: number) => void;
