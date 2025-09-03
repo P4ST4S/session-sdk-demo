@@ -6,6 +6,53 @@ import type {
   AxiosRequestConfig,
 } from "axios";
 
+// Types pour window global
+declare global {
+  interface Window {
+    VITE_API_BASE_URL?: string;
+  }
+}
+
+// Configuration globale pour l'URL de base
+let globalBaseURL: string | null = null;
+
+// Fonction pour définir l'URL de base globalement
+export const configureApiBaseURL = (baseURL: string): void => {
+  console.log('🔧 configureApiBaseURL appelée avec:', baseURL);
+  globalBaseURL = baseURL;
+  // Mettre à jour l'instance existante si elle existe
+  if (apiService) {
+    console.log('🔧 Mise à jour de apiService.baseURL vers:', baseURL);
+    apiService.updateBaseURL(baseURL);
+  } else {
+    console.log('⚠️ apiService n\'existe pas encore');
+  }
+};
+
+// Fonction pour récupérer l'URL de base dynamiquement
+const getBaseURL = (): string => {
+  // Priorité 1: URL configurée dynamiquement
+  if (globalBaseURL) {
+    return globalBaseURL;
+  }
+
+  // Priorité 2: Variable d'environnement du projet hôte (si disponible via window)
+  if (typeof window !== "undefined" && window.VITE_API_BASE_URL) {
+    return window.VITE_API_BASE_URL;
+  }
+
+  // Priorité 3: Variable d'environnement du SDK
+  if (
+    typeof import.meta !== "undefined" &&
+    import.meta.env?.VITE_API_BASE_URL
+  ) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+
+  // Priorité 4: URL par défaut (dev2 pour développement)
+  return "https://dev2.datakeen.co/backend/session";
+};
+
 // Types pour la configuration de l'API
 export interface ApiConfig {
   baseURL: string;
@@ -53,13 +100,6 @@ export class ApiService {
     // Intercepteur de requête
     this.client.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        // Log des requêtes en développement
-        if (process.env.NODE_ENV === "development") {
-          console.log(
-            `🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`
-          );
-        }
-
         return config;
       },
       (error: AxiosError) => {
@@ -70,11 +110,6 @@ export class ApiService {
     // Intercepteur de réponse pour gérer les erreurs
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
-        if (process.env.NODE_ENV === "development") {
-          console.log(
-            `✅ API Response: ${response.status} ${response.config.url}`
-          );
-        }
         return response;
       },
       (error: AxiosError) => {
@@ -136,7 +171,6 @@ export class ApiService {
     data?: any,
     config?: AxiosRequestConfig
   ): Promise<ApiResponse<T>> {
-    console.log("API POST method called", url, data);
     const response = await this.client.post<T>(url, data, config);
     return {
       data: response.data,
@@ -201,6 +235,12 @@ export class ApiService {
   getRawClient(): AxiosInstance {
     return this.client;
   }
+
+  // Méthode pour mettre à jour dynamiquement l'URL de base
+  updateBaseURL(baseURL: string): void {
+    this.config.baseURL = baseURL;
+    this.client.defaults.baseURL = baseURL;
+  }
 }
 
 // Factory pour créer une instance
@@ -210,8 +250,6 @@ export const createApiService = (config: ApiConfig): ApiService => {
 
 // Instance par défaut (à configurer selon vos besoins)
 export const apiService = createApiService({
-  baseURL:
-    import.meta.env.VITE_API_BASE_URL ||
-    "http://localhost:8888/backend/session",
+  baseURL: getBaseURL(),
   timeout: 30000,
 });

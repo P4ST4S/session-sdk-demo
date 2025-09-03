@@ -2,6 +2,10 @@ import "../Video.css";
 import Button from "../../ui/Button";
 import Title from "../../ui/Title";
 import Subtitle from "../../ui/Subtitle";
+import UserHandsIcon from "../../../assets/User Hands.svg";
+import FaceScanSquareIcon from "../../../assets/Face Scan Square.svg";
+import LightbulbIcon from "../../../assets/Lightbulb.svg";
+import MonitorCameraIcon from "../../../assets/Monitor Camera.svg";
 
 interface InstructionsSelfieProps {
   setStep: (step: number) => void;
@@ -35,21 +39,12 @@ const InstructionsSelfie = ({ setStep, onBack }: InstructionsSelfieProps) => {
           {/* Custom instructions with icons */}
           <div className="mb-8 space-y-6">
             <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-[#11E5C5] bg-opacity-20 flex items-center justify-center text-[#11E5C5] mr-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="8" r="5" />
-                  <path d="M20 21a8 8 0 0 0-16 0" />
-                </svg>
+              <div className="w-10 h-10 rounded-full bg-[#11E5C5] bg-opacity-20 flex items-center justify-center text-[#11E5C5] mr-4 flex-shrink-0">
+                <img
+                  src={UserHandsIcon}
+                  alt="User hands"
+                  className="w-5 h-5 object-contain"
+                />
               </div>
               <div>
                 <h3 className="font-medium text-sm">
@@ -63,21 +58,12 @@ const InstructionsSelfie = ({ setStep, onBack }: InstructionsSelfieProps) => {
             </div>
 
             <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-[#11E5C5] bg-opacity-20 flex items-center justify-center text-[#11E5C5] mr-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
+              <div className="w-10 h-10 rounded-full bg-[#11E5C5] bg-opacity-20 flex items-center justify-center text-[#11E5C5] mr-4 flex-shrink-0">
+                <img
+                  src={FaceScanSquareIcon}
+                  alt="Face scan"
+                  className="w-5 h-5 object-contain"
+                />
               </div>
               <div>
                 <h3 className="font-medium text-sm">
@@ -90,20 +76,12 @@ const InstructionsSelfie = ({ setStep, onBack }: InstructionsSelfieProps) => {
             </div>
 
             <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-[#11E5C5] bg-opacity-20 flex items-center justify-center text-[#11E5C5] mr-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2v20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07M22 12H2" />
-                </svg>
+              <div className="w-10 h-10 rounded-full bg-[#11E5C5] bg-opacity-20 flex items-center justify-center text-[#11E5C5] mr-4 flex-shrink-0">
+                <img
+                  src={LightbulbIcon}
+                  alt="Lightbulb"
+                  className="w-5 h-5 object-contain"
+                />
               </div>
               <div>
                 <h3 className="font-medium text-sm">
@@ -116,34 +94,12 @@ const InstructionsSelfie = ({ setStep, onBack }: InstructionsSelfieProps) => {
             </div>
 
             <div className="flex items-center">
-              <div className="w-10 h-10 rounded-full bg-[#11E5C5] bg-opacity-20 flex items-center justify-center text-[#11E5C5] mr-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect
-                    x="2"
-                    y="2"
-                    width="20"
-                    height="20"
-                    rx="2.18"
-                    ry="2.18"
-                  />
-                  <line x1="7" y1="2" x2="7" y2="22" />
-                  <line x1="17" y1="2" x2="17" y2="22" />
-                  <line x1="2" y1="12" x2="22" y2="12" />
-                  <line x1="2" y1="7" x2="7" y2="7" />
-                  <line x1="2" y1="17" x2="7" y2="17" />
-                  <line x1="17" y1="17" x2="22" y2="17" />
-                  <line x1="17" y1="7" x2="22" y2="7" />
-                </svg>
+              <div className="w-10 h-10 rounded-full bg-[#11E5C5] bg-opacity-20 flex items-center justify-center text-[#11E5C5] mr-4 flex-shrink-0">
+                <img
+                  src={MonitorCameraIcon}
+                  alt="Monitor camera"
+                  className="w-5 h-5 object-contain"
+                />
               </div>
               <div>
                 <h3 className="font-medium text-sm">

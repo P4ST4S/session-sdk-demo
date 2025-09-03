@@ -1,0 +1,37 @@
+{
+  "document_error_description_conform": "Le document a été entièrement vérifié par l'IA, il est valide et conforme",
+  "document_error_description_blurry": "Le document n'a pas pu être traité: Flou",
+  "document_error_description_reflections": "Le document n'a pas pu être traité: Reflets",
+  "document_error_description_readability": "Le document n'a pas pu être traité: Impossible de lire les informations textuelles",
+  "document_error_description_noIdFound": "Le document n'a pas pu être traité: Aucune pièce d'identité trouvée",
+  "document_error_description_missingPart": "Le document n'a pas pu être traité: Une partie du document est manquante",
+  "document_error_description_missingMRZ": "Le document n'a pas pu être traité: Le MRZ est manquant",
+  "document_error_description_error": "Une erreur inconnue est survenue",
+  "document_error_description_expired": "Le document est expiré",
+  "document_error_description_toVerify": "Nous n'avons pas pu traiter tous les contrôles sur le document donné, veuillez vérifier son authenticité",
+  "document_error_description_suspicious": "Au moins un élément du document est suspect",
+  "document_error_description_pepOrSanction": "Le propriétaire du document est répertorié comme PEP ou personne sanctionnée",
+  "document_error_description_owner": "Le propriétaire du document ne correspond pas aux informations saisies par l'utilisateur",
+  "document_error_description_biometrics": "Le visage sur la pièce d'identité est détecté comme étant différent du visage de la photo",
+  "document_error_description_unexpected": "Le type de document n'est pas celui attendu",
+  "document_error_description_specimen": "Le document a été trouvé dans notre base de données de spécimens",
+  "errors": {
+    "verification_failed": "Vérification échouée",
+    "verification_failed_subtitle": "Nous n'avons pas pu valider votre {{documentType}}. Veuillez vérifier les points ci-dessous et réessayer.",
+    "problems_detected": "Problèmes détectés",
+    "image_quality_insufficient": "• Qualité des images : Insuffisante",
+    "readability_problematic": "• Lisibilité des informations : Problématique", 
+    "authenticity_not_verified": "• Authenticité : Non vérifiée",
+    "next_steps": "Prochaines étapes",
+    "next_steps_description": "Veuillez reprendre les photos de votre document en suivant les conseils d'amélioration pour une meilleure qualité.",
+    "back_to_user_input": "Retour aux informations d'identité",
+    "continue_anyway": "Poursuivre tout de même",
+    "retry_verification": "Recommencer la vérification"
+  },
+  "documentTypes": {
+    "national_id": "carte nationale d'identité",
+    "passport": "passeport", 
+    "driving_license": "permis de conduire",
+    "document": "document"
+  }
+}

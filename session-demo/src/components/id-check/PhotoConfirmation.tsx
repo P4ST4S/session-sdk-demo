@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import Button from "../ui/Button";
 import Title from "../ui/Title";
 import Subtitle from "../ui/Subtitle";
-import PhotoProcessingLoader from "./PhotoProcessingLoader";
 import ButtonDesktop from "../ui/ButtonDesktop";
 import type { onUploadFiles } from "../../types/uploadFiles";
 
@@ -22,33 +21,7 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
   requiresTwoSides = false,
   onConfirm,
   onRetry,
-  onRetryAfterProcessing,
-  fileUploaded,
 }) => {
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const handleConfirm = () => {
-    setIsProcessing(true);
-  };
-
-  const handleProcessingComplete = () => {
-    // Call the original onConfirm callback after processing is complete
-    onConfirm();
-  };
-
-  const handleRetryAfterProcessing = () => {
-    onRetryAfterProcessing();
-  };
-
-  if (isProcessing) {
-    return (
-      <PhotoProcessingLoader
-        onProcessingComplete={handleProcessingComplete}
-        onRetry={handleRetryAfterProcessing}
-        filesUploaded={fileUploaded}
-      />
-    );
-  }
 
   return (
     <div className="flex flex-col justify-between h-full w-full">
@@ -112,7 +85,7 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
         <div className="w-full max-w-md mx-auto">
           {/* Mobile layout - stacked buttons */}
           <div className="flex flex-col space-y-3 md:hidden">
-            <Button onClick={handleConfirm} className="w-full py-3">
+            <Button onClick={onConfirm} className="w-full py-3">
               Confirmer
             </Button>
             <button
@@ -128,7 +101,7 @@ const PhotoConfirmation: React.FC<PhotoConfirmationProps> = ({
             <ButtonDesktop onClick={onRetry} type="back">
               Reprendre la photo
             </ButtonDesktop>
-            <ButtonDesktop onClick={handleConfirm} type="continue">
+            <ButtonDesktop onClick={onConfirm} type="continue">
               Confirmer
             </ButtonDesktop>
           </div>

@@ -1,0 +1,228 @@
+/* Video Recorder Component Styles */
+.sdk-session {
+  /* Styles pour forcer le VideoRecorder à prendre toute la hauteur disponible */
+  .selfie .video-container uni-video-recorder {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Règles spécifiques pour le composant Unissey */
+  uni-video-recorder::part(video-container),
+  uni-video-recorder::shadow-dom(video-container) {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: none !important;
+    object-fit: cover !important;
+  }
+
+  /* Assurer que le composant vidéo remplit tout l'espace */
+  .selfie uni-video-recorder video,
+  .selfie uni-video-recorder canvas {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    max-height: none !important;
+  }
+
+  /* S'assurer que la vidéo est centrée et remplit tout l'espace */
+  .video-fullscreen-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* Style pour le conteneur de l'enregistreur vidéo en plein écran */
+  .selfie-recorder-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Supprimer les bords arrondis du composant VideoRecorder */
+  .selfie uni-video-recorder,
+  uni-video-recorder::part(root),
+  uni-video-recorder::shadow-dom(root),
+  uni-video-recorder video,
+  uni-video-recorder canvas {
+    border-radius: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Cibler spécifiquement les éléments internes du VideoRecorder */
+  uni-video-recorder::part(video-container),
+  uni-video-recorder::shadow-dom(video-container),
+  uni-video-recorder::part(video),
+  uni-video-recorder::shadow-dom(video) {
+    border-radius: 0 !important;
+  }
+
+  /* S'assurer que tous les conteneurs internes n'ont pas de bords arrondis */
+  .video-container > div,
+  .video-container > div > *,
+  .selfie uni-video-recorder > * {
+    border-radius: 0 !important;
+  }
+
+  /* Classe spécifique pour supprimer les bords arrondis du VideoRecorder */
+  .video-recorder-no-radius,
+  .video-recorder-no-radius::part(video),
+  .video-recorder-no-radius::shadow-dom(video),
+  .video-recorder-no-radius video,
+  .video-recorder-no-radius canvas,
+  .video-recorder-no-radius * {
+    border-radius: 0 !important;
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Règles très strictes pour supprimer tous les bords arrondis partout dans le composant selfie */
+  .selfie video,
+  .selfie canvas,
+  .selfie uni-video-recorder,
+  .selfie uni-video-recorder *,
+  .video-container *,
+  uni-video-recorder,
+  uni-video-recorder *,
+  uni-video-recorder *::before,
+  uni-video-recorder *::after,
+  uni-video-recorder div,
+  uni-video-recorder video,
+  uni-video-recorder canvas {
+    border-radius: 0 !important;
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    overflow: hidden !important;
+    background: transparent !important;
+  }
+
+  /* Forcer la suppression des bords arrondis sur tous les éléments shadow DOM */
+  .sdk-session :host,
+  .sdk-session :host(*),
+  .sdk-session ::part(*),
+  .sdk-session ::shadow-dom(*) {
+    border-radius: 0 !important;
+    -webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+  }
+
+  /* Style extrêmement spécifique pour éliminer les bords arrondis */
+  .video-container uni-video-recorder {
+    border-radius: 0 !important;
+    transform: translateZ(0);
+  }
+
+  /* Styles appliqués au niveau global pour affecter les web components */
+  .sdk-session :root {
+    --uni-video-recorder-border-radius: 0 !important;
+    --uni-border-radius: 0 !important;
+  }
+
+  /* Utiliser la méthode !important sur le style direct */
+  .selfie .video-container uni-video-recorder {
+    --border-radius: 0 !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Styles spécifiques pour éliminer complètement les bords arrondis et le fond noir du flux selfie */
+  .video-js,
+  .video-js *,
+  .vjs-default-skin,
+  .vjs-big-play-button,
+  .vjs-control-bar,
+  uni-video-recorder::shadow-dom(video-js),
+  uni-video-recorder::part(video-js) {
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    overflow: hidden !important;
+  }
+
+  /* Assurer que tous les composants video-js prennent tout l'espace */
+  .video-js {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Forcer l'élément vidéo à prendre tout l'espace */
+  .video-js video {
+    object-fit: cover !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  /* S'assurer que les barres de contrôle et boutons n'ont pas de bords arrondis */
+  .vjs-control-bar,
+  .vjs-big-play-button,
+  .vjs-menu-button,
+  .vjs-menu-content,
+  .vjs-modal-dialog,
+  .vjs-volume-control,
+  .vjs-progress-control {
+    border-radius: 0 !important;
+  }
+
+  /* Supprimer tout masque ou ombre qui pourrait créer un effet de fond noir */
+  .video-container::before,
+  .video-container::after,
+  .selfie::before,
+  .selfie::after,
+  uni-video-recorder::before,
+  uni-video-recorder::after {
+    display: none !important;
+  }
+
+  /* Cibler spécifiquement les éléments web components */
+  ::part(video),
+  ::shadow-dom(video),
+  ::part(canvas),
+  ::shadow-dom(canvas) {
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+
+  /* Styles spécifiques pour les navigateurs basés sur WebKit/Blink */
+  @supports (-webkit-appearance: none) {
+    .selfie video,
+    .selfie canvas,
+    uni-video-recorder video,
+    uni-video-recorder canvas {
+      border-radius: 0 !important;
+      -webkit-border-radius: 0 !important;
+      mask-image: none !important;
+      -webkit-mask-image: none !important;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+    }
+  }
+
+  /* Styles spécifiques pour Firefox */
+  @-moz-document url-prefix() {
+    .selfie video,
+    .selfie canvas,
+    uni-video-recorder video,
+    uni-video-recorder canvas {
+      border-radius: 0 !important;
+    }
+  }
+
+  /* Désactiver toutes les marges internes qui pourraient affecter la hauteur */
+  .selfie * {
+    box-sizing: border-box;
+  }
+}

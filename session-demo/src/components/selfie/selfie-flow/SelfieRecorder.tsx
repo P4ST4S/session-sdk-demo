@@ -31,6 +31,13 @@ const SelfieRecorder = ({
     "idle" | "preparing" | "recording" | "processing"
   >("idle");
 
+  // Détection de la plateforme mobile
+  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+
+  console.log("📱 Platform detection:", { isMobile, isIOS, isAndroid });
+
   // Utiliser le hook personnalisé pour injecter des styles CSS spécifiques
   useVideoRecorderStyles();
 
@@ -94,6 +101,26 @@ const SelfieRecorder = ({
   };
 
   const handleRecordCompleted = (e: Event) => {
+    console.log("🎬 Recording completed:", e);
+    
+    // Validation simple et directe
+    const customEvent = e as CustomEvent<{ media?: Blob; [key: string]: unknown }>;
+    if (!customEvent.detail?.media) {
+      console.error("❌ No media in recording event");
+      setRecordingState("idle");
+      setDisableButton(false);
+      return;
+    }
+
+    // Une seule vérification : le fichier ne doit pas être vide
+    if (customEvent.detail.media.size === 0) {
+      console.error("❌ Empty media file");
+      setRecordingState("idle");
+      setDisableButton(false);
+      return;
+    }
+
+    console.log("✅ Media validation passed, proceeding...");
     setRecordingState("processing");
     handleSelfie(e);
   };
@@ -143,6 +170,43 @@ const SelfieRecorder = ({
             onRecorderReady={handleRecorderReady}
             onRecordCompleted={handleRecordCompleted}
             onRecord={recordStarting}
+            strings={{
+              capture: "Capture",
+              retry: "Réessayer",
+              errors: {
+                noFace: "Aucun visage détecté",
+              },
+              hints: {
+                up: "Montez votre visage",
+                down: "Baissez votre visage",
+                perfect: "Parfait !",
+                right: "Déplacez-vous vers la droite",
+                left: "Déplacez-vous vers la gauche",
+                closer: "Rapprochez-vous",
+                record: "Enregistrement en cours",
+                nil: "",
+              },
+              forbiddenActionMessages: {
+                visibility: "Veuillez rester sur cette page",
+                focus: "Veuillez garder le focus sur cette fenêtre",
+                keyboard:
+                  "Veuillez ne pas utiliser le clavier pendant l'enregistrement",
+                default: "Action interdite pendant l'enregistrement",
+              },
+              cameraErrorMessages: {
+                permissionDenied: "Permission d'accès à la caméra refusée",
+                openFailed: "Impossible d'ouvrir la caméra",
+                default: "Erreur de caméra",
+              },
+              rotationWhileCapturingErrorMessage:
+                "Veuillez ne pas faire tourner l'appareil pendant l'enregistrement",
+              activeChallengeMessages: {
+                rotateLeft: "Tournez votre tête vers la gauche",
+                rotateRight: "Tournez votre tête vers la droite",
+                rotateUp: "Levez votre tête",
+                rotateDown: "Baissez votre tête",
+              },
+            }}
             style={{
               borderRadius: "0 !important",
               background: "transparent !important",
@@ -162,7 +226,7 @@ const SelfieRecorder = ({
             className="w-full py-3 md:py-4 relative selfie-button"
             disabled={disableButton || !recorderReady}
           >
-            {recordingState === "idle" && "Prendre mon selfie"}
+            {recordingState === "idle" && "Démarrer"}
             {recordingState === "preparing" && "Préparation..."}
             {recordingState === "recording" && (
               <span className="flex items-center justify-center">

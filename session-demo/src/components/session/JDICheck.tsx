@@ -12,7 +12,7 @@ interface JDICheckProps {
   stepObject: stepObject;
   sessionId: string;
   onContinueOnPC?: () => void;
-  documentTypeId?: string; // ID du type de document (jdd, income-proof, etc.)
+  documentTypeId?: string;
 }
 
 const JDICheck = ({
@@ -22,41 +22,37 @@ const JDICheck = ({
   documentTypeId,
 }: JDICheckProps) => {
   const [JDIStep, setJDIStep] = useState(0);
-  const [selectedDocumentType, setSelectedDocumentType] = useState<
-    string | null
-  >(null);
+  const [selectedDocumentType, setSelectedDocumentType] = useState<string | null>(null);
   const [fileUploaded, setFileUploaded] = useState<onUploadFiles | null>(null);
 
-  const handleDocumentTypeSelect = (documentType: string) => {
+  const handleDocumentSelect = (documentType: string) => {
     setSelectedDocumentType(documentType);
-    setJDIStep(2); // Go to document upload step
+    setJDIStep(2);
   };
 
   const handleDocumentUpload = (files: onUploadFiles) => {
     setFileUploaded(files);
-    // Start processing
     setJDIStep(3);
   };
 
   const handleProcessingComplete = (success: boolean) => {
     if (success) {
-      setJDIStep(4); // Go to success screen
+      setJDIStep(4);
     } else {
-      setJDIStep(5); // Go to error screen
+      setJDIStep(5);
     }
   };
 
   const handleRetryFromError = () => {
-    setJDIStep(2); // Go back to document upload
+    setJDIStep(2);
   };
 
-  const handleContactSupport = () => {
-    // Here you would typically open a support chat or redirect to support page
-    alert("Fonctionnalité de support à implémenter");
+  const handleBackToUserInput = () => {
+    // Retour à l'étape 2 qui correspond à UserInputForm (étape d'informations d'identité)
+    stepObject.setStep(2);
   };
 
   const handleSuccessContinue = () => {
-    // Continue to next step in the main flow
     if (onContinueOnPC) {
       onContinueOnPC();
     } else {
@@ -65,19 +61,15 @@ const JDICheck = ({
   };
 
   const handleBack = () => {
-    // Si on est à la première étape interne
     if (JDIStep === 0) {
-      // Revenir à l'étape précédente du flux principal
       stepObject.setStep(stepObject.step - 1);
     } else {
-      // Sinon, revenir à l'étape précédente du flux interne
       setJDIStep(JDIStep - 1);
     }
   };
 
   const onRetake = () => {
-    setFileUploaded(null);
-    setJDIStep(2); // Revenir à l'étape de téléchargement du document
+    setJDIStep(2);
   };
 
   switch (JDIStep) {
@@ -86,17 +78,14 @@ const JDICheck = ({
         <JDIIntroduction
           onContinue={() => setJDIStep(1)}
           onBack={handleBack}
-          documentTypeId={documentTypeId}
-          sessionId={sessionId}
         />
       );
     case 1:
       return (
         <JDIDocumentSelection
-          onDocumentSelect={handleDocumentTypeSelect}
+          onDocumentSelect={handleDocumentSelect}
           onBack={handleBack}
           documentTypeId={documentTypeId}
-          sessionId={sessionId}
         />
       );
     case 2:
@@ -114,7 +103,6 @@ const JDICheck = ({
           documentType={selectedDocumentType!}
           onProcessingComplete={handleProcessingComplete}
           fileUploaded={fileUploaded}
-          onRetake={onRetake}
           documentTypeId="jdd"
         />
       );
@@ -130,7 +118,8 @@ const JDICheck = ({
         <JDIError
           documentType={selectedDocumentType!}
           onRetry={handleRetryFromError}
-          onContactSupport={handleContactSupport}
+          onContinueAnyway={handleSuccessContinue}
+          onBackToUserInput={handleBackToUserInput}
         />
       );
     default:

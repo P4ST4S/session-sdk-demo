@@ -24,28 +24,37 @@ export function getMimeTypeFromDataURL(dataurl: string): string | null {
   return match ? match[1] : null;
 }
 
-export // Map conformity code to the corresponding step index
-const codeToStep = (code: string): number => {
+// Map conformity code to the corresponding step index
+export const codeToStep = (code: string): number => {
   if (!code) return 0; // Default to generic error if no code is provided
+
+  // Success case - code 1.0 should go to success screen (step 4)
   if (code === "1.0") {
-    return 4; // Conform
+    return 4; // Conform - success
   }
-  if (code.includes("2")) {
+
+  // Document not valid (codes 7.x) - check this before codes 2.x
+  if (code.startsWith("7")) {
+    // Document not valid
+    return 3;
+  }
+
+  // Document not readable/processing issues (codes 2.x)
+  if (code.startsWith("2")) {
     // Document not readable
     return 1;
   }
+
+  // Document does not correspond to user input (codes 3.x, 4.x, 5.x, 8.x)
   if (
-    code.includes("3") ||
-    code.includes("4") ||
-    code.includes("5") ||
-    code.includes("8")
+    code.startsWith("3") ||
+    code.startsWith("4") ||
+    code.startsWith("5") ||
+    code.startsWith("8")
   ) {
     // Document does not correspond to user input
     return 2;
   }
-  if (code.includes("7")) {
-    // Document not valid
-    return 3;
-  }
+
   return 0; // Default to generic error
 };

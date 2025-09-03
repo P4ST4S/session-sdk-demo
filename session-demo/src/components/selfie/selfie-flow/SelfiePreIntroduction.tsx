@@ -18,11 +18,11 @@ const SelfiePreIntroduction = ({ onContinue }: SelfiePreIntroductionProps) => {
           {/* Header */}
           <div className="text-center space-y-4">
             <Title className="text-xl md:text-2xl lg:text-3xl font-semibold">
-              Prenez une vidéo de votre visage{" "}
+              Prenez une photo de votre visage{" "}
             </Title>
             <Subtitle className="text-xs md:text-xs text-gray-600 leading-relaxed px-4">
               Afin de vérifier votre identité, nous allons vous demander de
-              prendre une courte vidéo de votre visage{" "}
+              prendre une photo de votre visage{" "}
             </Subtitle>
           </div>
 
@@ -37,7 +37,7 @@ const SelfiePreIntroduction = ({ onContinue }: SelfiePreIntroductionProps) => {
             </div>
           </div>
           <p className="text-center text-xs  text-gray-600 leading-relaxed ">
-            À la prochaine étape, nous vous demanderons de prendre une vidéo de
+            À la prochaine étape, nous vous demanderons de prendre une photo de
             votre visage.
           </p>
         </div>

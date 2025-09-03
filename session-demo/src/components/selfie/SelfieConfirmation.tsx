@@ -43,57 +43,83 @@ const SelfieConfirmation = ({
     }
 
     const blob = selfieData.media;
-    const mimeType = blob.type;
-    const canPlay = document.createElement("video").canPlayType(mimeType);
-
-    if (!mimeType.startsWith("video/") || canPlay === "") {
-      setError("Format vidéo non supporté par ce navigateur");
+    
+    // Validation simple : juste vérifier que le blob existe et n'est pas vide
+    if (blob.size === 0) {
+      setError("Fichier vidéo vide");
       setIsLoading(false);
       return;
     }
 
-    const timeout = setTimeout(() => {
-      const videoUrl = URL.createObjectURL(blob);
-      const tempVideo = document.createElement("video");
-
-      tempVideo.autoplay = false;
-      tempVideo.muted = true;
-      tempVideo.playsInline = true;
-      tempVideo.crossOrigin = "anonymous";
-      tempVideo.src = videoUrl;
-
-      tempVideo.onloadedmetadata = () => {
-        tempVideo.currentTime = 0.1;
-      };
-
-      tempVideo.onseeked = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = tempVideo.videoWidth || 320;
-        canvas.height = tempVideo.videoHeight || 240;
-
-        const ctx = canvas.getContext("2d");
+    // Méthode robuste pour extraire une image du blob vidéo
+    const extractImageFromVideo = async () => {
+      try {
+        const video = document.createElement('video');
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
         if (!ctx) {
-          setError("Impossible de dessiner la vidéo");
-          setIsLoading(false);
-          return;
+          throw new Error('Canvas non supporté');
         }
 
-        ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
-        const frameUrl = canvas.toDataURL("image/jpeg", 0.9);
-        setImageUrl(frameUrl);
+        const videoUrl = URL.createObjectURL(blob);
+        
+        const processVideo = () => {
+          return new Promise<string>((resolve, reject) => {
+            video.onloadedmetadata = () => {
+              // Configurer le canvas avec les bonnes dimensions
+              canvas.width = video.videoWidth || 640;
+              canvas.height = video.videoHeight || 480;
+              
+              // Aller à une frame spécifique (pas la première qui peut être noire)
+              video.currentTime = Math.min(0.1, video.duration / 4);
+            };
+
+            video.onseeked = () => {
+              try {
+                // Dessiner la frame sur le canvas
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Convertir en image
+                const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                
+                // Nettoyage
+                URL.revokeObjectURL(videoUrl);
+                video.remove();
+                
+                resolve(imageDataUrl);
+              } catch (err) {
+                reject(err);
+              }
+            };
+
+            video.onerror = () => {
+              URL.revokeObjectURL(videoUrl);
+              video.remove();
+              reject(new Error('Erreur de chargement vidéo'));
+            };
+
+            // Configurer la vidéo
+            video.src = videoUrl;
+            video.muted = true;
+            video.playsInline = true;
+            video.load();
+          });
+        };
+
+        const imageDataUrl = await processVideo();
+        setImageUrl(imageDataUrl);
         setIsLoading(false);
 
-        URL.revokeObjectURL(videoUrl);
-      };
-
-      tempVideo.onerror = (e) => {
-        console.error("❌ Erreur de lecture vidéo :", e);
-        setError("Impossible de charger la vidéo selfie");
+      } catch (error) {
+        console.error("❌ Error extracting image from video:", error);
+        setError("Impossible de charger la preview du selfie");
         setIsLoading(false);
-      };
-    }, 0); // delay to wait for the video to load
+      }
+    };
 
-    return () => clearTimeout(timeout);
+    extractImageFromVideo();
+
   }, [selfieData]);
 
   if (isLoading) {
@@ -189,8 +215,11 @@ const SelfieConfirmation = ({
             <div className="relative rounded-lg overflow-hidden border-2 border-[#11E5C5]">
               <img
                 src={imageUrl}
-                alt="Votre selfie"
+                alt="Selfie capturé"
                 className="w-full h-64 md:h-80 object-cover bg-white"
+                onError={() => {
+                  setError("Impossible d'afficher l'image du selfie");
+                }}
               />
               {/* Overlay pour améliorer la lisibilité */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/30 to-transparent p-3">

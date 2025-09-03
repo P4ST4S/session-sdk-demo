@@ -65,7 +65,7 @@ const JDISuccess = ({ documentType, onContinue }: JDISuccessProps) => {
             </h3>
             <p className="text-sm text-blue-800">
               Nous allons maintenant procéder à la vérification de votre
-              identité avec une photo en direct.
+              identité avec une photo selfie.
             </p>
           </div>
         </div>

@@ -8,6 +8,7 @@ export interface SessionConfig {
 export interface DatakeenSessionProps {
   sessionId: string;
   sessionConfig?: SessionConfig;
+  apiBaseUrl?: string; // Optional API base URL for dynamic environment configuration
 }
 
 export interface UseSessionReturn {

@@ -22,7 +22,7 @@ const CGU = ({ setStep }: { setStep: (nubr: number) => void }) => {
 
   const goOnNextStep = () => {
     if (checked) {
-      setStep(1);
+      setStep(1); // Go to step 1 (MobileRedirect or UserInputForm)
     } else {
       setError(true);
     }

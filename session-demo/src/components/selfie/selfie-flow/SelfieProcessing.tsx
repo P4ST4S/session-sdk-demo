@@ -13,14 +13,14 @@ interface SelfieProcessingProps {
 
 const processingSteps = [
   {
-    title: "Analyse des documents",
-    subtitle: "Vérification de la qualité des images",
+    title: "Analyse du selfie",
+    subtitle: "Vérification de la qualité de la vidéo",
   },
   {
-    title: "Validation des informations",
-    subtitle: "Lecture des données du document",
+    title: "Détection du visage",
+    subtitle: "Reconnaissance et validation faciale",
   },
-  { title: "Vérification de sécurité", subtitle: "Contrôle d'authenticité" },
+  { title: "Vérification de sécurité", subtitle: "Contrôle de vivacité" },
   { title: "Finalisation", subtitle: "Traitement en cours..." },
 ];
 const SelfieProcessing = ({
@@ -40,30 +40,95 @@ const SelfieProcessing = ({
     if (!selfieFile) return;
 
     analysisStartedRef.current = true;
+    
+    // Timeout simple : 60 secondes pour tous
+    const timeoutId = setTimeout(() => {
+      if (!isDone) {
+        console.error("⏰ Selfie analysis timeout after 60 seconds");
+        setHasError(true);
+        setIsDone(true);
+        onProcessingComplete(false);
+      }
+    }, 60000);
+    
     const processFiles = async () => {
       const sessionId = localStorage.getItem("sessionId");
       if (!sessionId) {
+        console.error("❌ No session ID found");
         setHasError(true);
         onProcessingComplete(false);
         setIsDone(true);
+        clearTimeout(timeoutId);
         return;
       }
+      
+      console.log("🚀 Starting selfie analysis...");
+      
       try {
-        const response = await analyzeSelfie(sessionId, selfieFile);
-        console.log("Analysis response:", response);
-        setConformityCode(
-          response?.data?.analysisResult?.job_status?.predictions?.[0]?.code ||
-            null
-        );
+        // Délai minimum simple : 2 secondes
+        const [response] = await Promise.all([
+          analyzeSelfie(sessionId, selfieFile),
+          new Promise(resolve => setTimeout(resolve, 2000))
+        ]);
+        
+        console.log("✅ Analysis response:", response);
+        clearTimeout(timeoutId);
 
+        // Handle Unissey response format
+        let isSuccess = false;
+        let conformityCodeToSet = "4"; // Default to error
+
+        if (response && response.data) {
+          // Check if analysis was successful based on Unissey response structure
+          const data = response.data;
+
+          if (data.is_genuine && data.is_match) {
+            // Success: both face detection and comparison successful
+            isSuccess = true;
+            conformityCodeToSet = "1.0"; // Success code
+          } else if (data.details) {
+            // Check specific failure reasons
+            const details = data.details;
+
+            if (details.liveness?.result !== "success") {
+              conformityCodeToSet = "3.0"; // Liveness failed
+            } else if (details.face_comparison?.result !== "success") {
+              conformityCodeToSet = "2.0"; // Face comparison failed
+            } else {
+              conformityCodeToSet = "4.0"; // Generic error
+            }
+          }
+        }
+
+        console.log("📊 Selfie analysis result:", {
+          isSuccess,
+          conformityCode: conformityCodeToSet,
+          isGenuine: response?.data?.is_genuine,
+          isMatch: response?.data?.is_match,
+        });
+
+        setConformityCode(conformityCodeToSet);
         setIsDone(true);
+
+        // Only call onProcessingComplete with success if everything passed
+        if (isSuccess) {
+          onProcessingComplete(true);
+        }
       } catch (error) {
+        console.error("💥 Selfie analysis failed:", error);
+        clearTimeout(timeoutId);
         setHasError(true);
         setIsDone(true);
+        onProcessingComplete(false);
       }
     };
+    
     processFiles();
-  }, [onProcessingComplete, selfieFile]);
+    
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [onProcessingComplete, selfieFile, isDone]);
 
   useEffect(() => {
     // While analysis is not finished, stay at step 0
@@ -103,7 +168,7 @@ const SelfieProcessing = ({
             </Title>
             <Subtitle className="text-sm text-gray-600 leading-relaxed">
               {hasError
-                ? "Une erreur est survenue lors de l'analyse du document. Veuillez réessayer."
+                ? "Une erreur est survenue lors de l'analyse du selfie. Veuillez réessayer."
                 : `Nous analysons votre selfie. Cela peut prendre quelques instants.`}
             </Subtitle>
           </div>

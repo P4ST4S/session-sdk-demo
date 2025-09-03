@@ -1,0 +1,13 @@
+/* Tailwind CSS v4 directives */
+@import "tailwindcss";
+
+/* Base SDK styles - Always loaded */
+.sdk-session {
+  /* Core SDK container styles that are always needed */
+}
+
+/* Global styles that should always be present */
+.sdk-session html,
+.sdk-session body {
+  overscroll-behavior-y: contain;
+}

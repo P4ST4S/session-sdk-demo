@@ -5,7 +5,7 @@
  * Handles fetching session data by ID.
  */
 
-import { API_BASE_URL } from "../config/env";
+import { apiService } from "./api";
 
 /**
  * Interface for session template node
@@ -48,6 +48,7 @@ interface SessionTemplate {
   userId: string | null;
   created_at: string;
   updated_at: string;
+  mobile?: boolean; // Ajout de la propriété mobile
 }
 
 /**
@@ -90,24 +91,10 @@ export interface SessionData {
  * @param sessionId - The unique identifier of the session
  * @returns The session data
  */
-export const fetchSessionById = async (
-  sessionId: string
-): Promise<SessionData> => {
+export const fetchSessionById = async (sessionId: string): Promise<SessionData> => {
   try {
-    console.log("baseURL:", API_BASE_URL);
-
-    const response = await fetch(
-      `${API_BASE_URL}/backend/session/sdk/${sessionId}`
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch session data: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
-    return data;
+    const response = await apiService.get(`/backend/session/sdk/${sessionId}`);
+    return response.data;
   } catch (error) {
     console.error("Error fetching session data:", error);
     throw error;
@@ -323,27 +310,10 @@ export const updateSessionUserInput = async (
   }
 ): Promise<SessionData> => {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/backend/session/sdk/${sessionId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userInput,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to update session data: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
-    return data;
+    const response = await apiService.patch(`/backend/session/sdk/${sessionId}`, {
+      userInput,
+    });
+    return response.data;
   } catch (error) {
     console.error("Error updating session data:", error);
     throw error;
@@ -366,27 +336,10 @@ export const updateSessionContactInfo = async (
   }
 ): Promise<SessionData> => {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/backend/session/sdk/${sessionId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contactInfo,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to update contact information: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
-    return data;
+    const response = await apiService.patch(`/backend/session/sdk/${sessionId}`, {
+      contactInfo,
+    });
+    return response.data;
   } catch (error) {
     console.error("Error updating contact information:", error);
     throw error;
@@ -405,27 +358,10 @@ export const updateSessionStatus = async (
   status: string
 ): Promise<SessionData> => {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/backend/session/sdk/${sessionId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          status,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        `Failed to update session status: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
-    return data;
+    const response = await apiService.patch(`/backend/session/sdk/${sessionId}`, {
+      status,
+    });
+    return response.data;
   } catch (error) {
     console.error("Error updating session status:", error);
     throw error;

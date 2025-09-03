@@ -4,21 +4,18 @@ import Subtitle from "../ui/Subtitle";
 import Button from "../ui/Button";
 import type { ProcessingStep } from "../../types/session";
 import { DEFAULT_PROCESSING_STEPS } from "../../utils/stepsAnalysis";
-import type { onUploadFiles } from "../../types/uploadFiles";
-import { analyzeFiles } from "../../services/analysis";
 
 interface PhotoProcessingLoaderProps {
   onProcessingComplete: () => void;
   onRetry?: () => void;
   steps?: ProcessingStep[];
-  filesUploaded: onUploadFiles | null;
+  filesUploaded?: any; // Garde pour compatibilité mais non utilisé
 }
 
 const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
   onProcessingComplete,
   onRetry,
   steps = DEFAULT_PROCESSING_STEPS,
-  filesUploaded,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(true);
@@ -28,48 +25,35 @@ const PhotoProcessingLoader: React.FC<PhotoProcessingLoaderProps> = ({
 
   useEffect(() => {
     let isMounted = true;
-    const processSteps = async () => {
-      const sessionId = localStorage.getItem("sessionId");
-      if (!sessionId) {
-        console.error("Session ID not found in local storage");
-        if (isMounted) {
-          setIsProcessing(false);
-          onProcessingComplete();
-        }
-        return;
+    
+    // Animation des étapes sans faire d'appel API
+    const simulateSteps = async () => {
+      for (let i = 0; i <= steps.length; i++) {
+        if (!isMounted) break;
+        
+        await new Promise(resolve => setTimeout(resolve, 800)); // Délai entre les étapes
+        
+        if (!isMounted) break;
+        setCurrentStep(i);
       }
-
-      if (filesUploaded) {
-        try {
-          await analyzeFiles(
-            sessionId,
-            filesUploaded,
-            "id",
-            null,
-            true,
-            true,
-            false
-          );
+      
+      if (isMounted) {
+        setIsProcessing(false);
+        // Petit délai avant de passer à l'étape suivante
+        setTimeout(() => {
           if (isMounted) {
-            setCurrentStep(steps.length);
-            setIsProcessing(false);
             onProcessingComplete();
           }
-        } catch (error) {
-          console.error("Error analyzing files:", error);
-          if (isMounted) {
-            setIsProcessing(false);
-            onProcessingComplete();
-          }
-        }
+        }, 500);
       }
     };
-    processSteps();
+
+    simulateSteps();
 
     return () => {
       isMounted = false;
     };
-  }, [currentStep, onProcessingComplete]);
+  }, [onProcessingComplete, steps.length]);
 
   return (
     <div className="flex flex-col justify-between h-full w-full">

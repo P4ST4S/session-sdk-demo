@@ -1,0 +1,37 @@
+{
+  "document_error_description_conform": "The document has been fully verified by the AI, it is valid and compliant",
+  "document_error_description_blurry": "The document could not be processed: Blurry",
+  "document_error_description_reflections": "The document could not be processed: Reflections",
+  "document_error_description_readability": "The document could not be processed: Unable to read text information",
+  "document_error_description_noIdFound": "The document could not be processed: No ID found",
+  "document_error_description_missingPart": "The document could not be processed: A part of the document is missing",
+  "document_error_description_missingMRZ": "The document could not be processed: The MRZ is missing",
+  "document_error_description_error": "An unknown error occurred",
+  "document_error_description_expired": "The document is expired",
+  "document_error_description_toVerify": "We could not process all the controls on the given document, please review its authenticity",
+  "document_error_description_suspicious": "At least one element on the document is suspicious",
+  "document_error_description_pepOrSanction": "The owner of the document is listed as a PEP or sanctioned person",
+  "document_error_description_owner": "The owner of the document does not match the user input",
+  "document_error_description_biometrics": "The face on the ID is detected as different from the face in the photo",
+  "document_error_description_unexpected": "The type of the document is not the one expected",
+  "document_error_description_specimen": "The document has been found in our specimen database",
+  "errors": {
+    "verification_failed": "Verification Failed",
+    "verification_failed_subtitle": "We could not validate your {{documentType}}. Please check the points below and try again.",
+    "problems_detected": "Problems Detected",
+    "image_quality_insufficient": "• Image quality: Insufficient",
+    "readability_problematic": "• Information readability: Problematic",
+    "authenticity_not_verified": "• Authenticity: Not verified",
+    "next_steps": "Next Steps",
+    "next_steps_description": "Please retake photos of your document following the improvement tips for better quality.",
+    "back_to_user_input": "Back to identity information",
+    "continue_anyway": "Continue anyway",
+    "retry_verification": "Restart verification"
+  },
+  "documentTypes": {
+    "national_id": "national identity card",
+    "passport": "passport",
+    "driving_license": "driving license", 
+    "document": "document"
+  }
+}

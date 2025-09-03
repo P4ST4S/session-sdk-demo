@@ -21,7 +21,8 @@ export class DocumentDetectionService {
   async startDocumentDetection(
     videoElement: HTMLVideoElement | null,
     canvasElement: HTMLCanvasElement | null,
-    onDocumentDetected: (imageDataUrl: string) => void
+    onDocumentDetected: (imageDataUrl: string) => void,
+    autoCapture: boolean = true // Add parameter to control auto-capture
   ): Promise<{ stop: () => void }> {
     this.stopDocumentDetection();
     await this.loadModel();
@@ -50,36 +51,42 @@ export class DocumentDetectionService {
         );
 
         if (documentLike) {
-          const ctx = canvasElement.getContext("2d");
+          if (autoCapture) {
+            const ctx = canvasElement.getContext("2d");
 
-          if (ctx) {
-            // Get the dimensions of the detected document
-            const [x, y, width, height] = documentLike.bbox;
+            if (ctx) {
+              // Get the dimensions of the detected document
+              const [x, y, width, height] = documentLike.bbox;
 
-            // Set the canvas size to match the detected area
-            canvasElement.width = width;
-            canvasElement.height = height;
+              // Set the canvas size to match the detected area
+              canvasElement.width = width;
+              canvasElement.height = height;
 
-            // Draw only the detected area on the canvas
-            ctx.drawImage(
-              videoElement,
-              x,
-              y,
-              width,
-              height, // Source rectangle (detected area)
-              0,
-              0,
-              width,
-              height // Destination rectangle (entire canvas)
-            );
+              // Draw only the detected area on the canvas
+              ctx.drawImage(
+                videoElement,
+                x,
+                y,
+                width,
+                height, // Source rectangle (detected area)
+                0,
+                0,
+                width,
+                height // Destination rectangle (entire canvas)
+              );
 
-            const dataUrl = canvasElement.toDataURL("image/jpeg");
+              const dataUrl = canvasElement.toDataURL("image/jpeg");
 
-            onDocumentDetected(dataUrl);
+              onDocumentDetected(dataUrl);
+            } else {
+              console.warn(
+                "[DocumentDetection] Canvas 2D context not available."
+              );
+            }
           } else {
-            console.warn(
-              "[DocumentDetection] Canvas 2D context not available."
-            );
+            // In manual mode, just signal that a document is detected
+            // Pass an empty string to indicate detection without capture
+            onDocumentDetected("");
           }
         } else {
           console.log("[DocumentDetection] No document-like object detected.");

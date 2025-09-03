@@ -1,0 +1,223 @@
+/* Selfie Route Styles */
+.sdk-session {
+  .selfie {
+    --uni-primary-color: #11e5c5;
+    --uni-secondary-color: #0a9983;
+    --uni-primary-color-lighter: #37a998;
+    --uni-secondary-color-lighter: #1cbeaa;
+    --uni-alt-color: #086e5f;
+    --uni-alt-color-lighter: #0d9485;
+    --uni-light-color-variant-1: #d0f7f2;
+    --uni-light-color-variant-2: #b2ece5;
+    --uni-light-color: #fff;
+    --uni-dark-color: #202020;
+    --uni-error-color: #f44336;
+
+    --uni-btn-padding: 10px 15px;
+    --uni-btn-border: solid 0px;
+    --uni-btn-border-radius: 12px;
+    --uni-btn-font-size: 16px;
+    --uni-btn-text-transform: normal;
+    --uni-btn-border-outlined: solid 1px;
+    --uni-btn-label-margin: 10px 0px;
+    --uni-btn-disabled-bg-color: #eee;
+
+    --uni-card-bg-color: rgba(51, 51, 51, 0.05);
+  }
+
+  .sdk-session body.recording-selfie {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .selfie uni-video-recorder {
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    object-fit: cover;
+  }
+
+  .selfie .video-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    flex: 1 1 auto;
+  }
+
+  /* Styles pour s'assurer que le VideoRecorder reste dans ses limites */
+  .selfie uni-video-recorder,
+  .selfie uni-video-recorder * {
+    max-height: 100vh;
+    overflow: hidden !important;
+  }
+
+  /* Style global pour le conteneur selfie pour éviter le défilement */
+  .sdk-session html.selfie-active,
+  .sdk-session body.selfie-active {
+    overflow: hidden;
+    height: 100%;
+    position: fixed;
+    width: 100%;
+  }
+
+  /* Styles spécifiques pour le SDK Unissey qui pourraient causer un défilement */
+  .selfie uni-video-recorder::part(root),
+  .selfie uni-video-recorder::shadow-dom(root) {
+    max-height: 100vh;
+    overflow: hidden !important;
+  }
+
+  /* Styles pour le cadre de guidage du selfie */
+  .selfie-guide-frame {
+    transition: box-shadow 0.3s ease;
+    border: 2px solid #11e5c5;
+    border-radius: 50%;
+  }
+
+  /* Animation pour le bouton d'enregistrement */
+  @keyframes pulse-border {
+    0% {
+      box-shadow: 0 0 0 0 rgba(17, 229, 197, 0.7);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(17, 229, 197, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(17, 229, 197, 0);
+    }
+  }
+
+  .selfie-record-btn {
+    animation: pulse-border 2s infinite;
+  }
+
+  /* Meilleure mise en page pour les instructions */
+  .selfie-instructions {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Styling pour le point rouge d'enregistrement */
+  .recording-indicator {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 4px 8px;
+    border-radius: 16px;
+  }
+
+  .recording-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ff3b30;
+    margin-right: 8px;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* Effet de transition pour la confirmation */
+  .selfie-confirmation-enter {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  .selfie-confirmation-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 300ms, transform 300ms;
+  }
+
+  /* Style pour l'aperçu du selfie */
+  .selfie-preview {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px solid #11e5c5;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .selfie-preview:hover {
+    transform: scale(1.02);
+  }
+
+  .selfie-preview::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 80%,
+      rgba(0, 0, 0, 0.2) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* Styles pour garantir que le selfie prend tout l'espace disponible */
+  .selfie-fullscreen {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .sdk-session .selfie-fullscreen body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .sdk-session .selfie-fullscreen #root,
+  .sdk-session .selfie-fullscreen [data-reactroot] {
+    height: 100%;
+  }
+
+  /* Style pour le cadre qui s'adapte à différentes tailles d'écran */
+  @media (max-height: 600px) {
+    .selfie-guide-frame {
+      height: 250px !important;
+      max-width: 250px !important;
+    }
+  }
+
+  @media (max-height: 500px) {
+    .selfie-guide-frame {
+      height: 200px !important;
+      max-width: 200px !important;
+    }
+  }
+
+  /* S'assurer que les composants parents ont aussi 100% de hauteur */
+  .selfie-parent {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}

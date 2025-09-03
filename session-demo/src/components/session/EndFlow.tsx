@@ -187,7 +187,7 @@ const EndFlow: React.FC<EndFlowProps> = ({
               C'est tout bon !
             </Title>
             <Subtitle className="text-sm md:text-base text-gray-600 leading-relaxed">
-              Merci d'avoir soumis vos documents, vous pouvez quitter cette
+              Merci d'avoir terminé ce parcours, vous pouvez quitter cette
               fenêtre.
             </Subtitle>
           </div>

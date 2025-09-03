@@ -9,9 +9,11 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { Select } from "../ui/SelectComponent";
 
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
+// Commencer par l'année courante - 18 ans pour une meilleure UX (2007 au lieu de 2025)
+const currentYear = new Date().getFullYear();
 const years = Array.from(
   { length: 100 },
-  (_, i) => new Date().getFullYear() - i
+  (_, i) => currentYear - 18 - i
 );
 const monthLabels = [
   "Janvier",
@@ -156,7 +158,8 @@ const UserInputForm = ({
     }
 
     if (!hasError && form.firstName && form.lastName && form.birthDate) {
-      setStep(step + 1);
+      // SKIP CONTACT INFO ET OTP - Aller directement au template (étape 5)
+      setStep(5);
       setUserInput({
         lastName: form.lastName,
         firstName: form.firstName,

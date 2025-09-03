@@ -24,7 +24,7 @@ const BeforePhoto = ({ setStep }: BeforePhotoProps) => {
             </Title>
             <Subtitle className="text-sm text-gray-600 leading-relaxed">
               Afin de vérifier votre pièce d'identité, nous allons vous demander
-              de tenir votre document puis de l'incliner face à la caméra
+              de tenir votre document face à la caméra
             </Subtitle>
           </div>
 

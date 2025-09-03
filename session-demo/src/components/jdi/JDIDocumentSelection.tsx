@@ -5,6 +5,12 @@ import Button from "../ui/Button";
 import ButtonDesktop from "../ui/ButtonDesktop";
 import { Select } from "../ui/SelectComponent";
 import { retrieveDocumentOptions } from "../../services/sessionService";
+import {
+  mapDocumentsToCategories,
+  findSpecificDocumentForCategory,
+  DOCUMENT_CATEGORIES,
+  type DocumentCategory,
+} from "../../utils/documentMapping";
 
 interface JDIDocumentSelectionProps {
   onDocumentSelect: (documentType: string) => void;
@@ -30,6 +36,9 @@ const JDIDocumentSelection = ({
   const [error, setError] = useState<string>("");
   const [documentOptions, setDocumentOptions] =
     useState<{ value: string; label: string }[]>(defaultDocumentTypes);
+  const [availableSpecificDocuments, setAvailableSpecificDocuments] = useState<
+    string[]
+  >([]);
 
   // Charger les options du document depuis localStorage si disponibles
   useEffect(() => {
@@ -38,13 +47,25 @@ const JDIDocumentSelection = ({
       const options = retrieveDocumentOptions(sessionId, documentTypeId);
 
       if (options && options.length > 0) {
-        // Transformer les options en format attendu par le Select
-        const formattedOptions = options.map((option: string) => ({
-          value: option,
-          label: option,
-        }));
+        console.log("Documents spécifiques récupérés:", options);
+        setAvailableSpecificDocuments(options);
+
+        // Mapper les documents spécifiques vers les catégories génériques
+        const categories = mapDocumentsToCategories(options);
+        console.log("Catégories mappées:", categories);
+
+        // Transformer les catégories en format attendu par le Select
+        const formattedOptions = categories.map(
+          (category: DocumentCategory) => ({
+            value: category.id,
+            label: category.label,
+          })
+        );
 
         setDocumentOptions(formattedOptions);
+      } else {
+        // Utiliser les options par défaut si aucune option n'est trouvée
+        setDocumentOptions(defaultDocumentTypes);
       }
     } else {
       // Utiliser les options par défaut si aucun type spécifique n'est fourni
@@ -58,7 +79,31 @@ const JDIDocumentSelection = ({
       return;
     }
     setError("");
-    onDocumentSelect(selectedDocument);
+
+    // Si nous avons des documents spécifiques disponibles, trouver le bon mapping
+    if (availableSpecificDocuments.length > 0) {
+      const specificDocument = findSpecificDocumentForCategory(
+        selectedDocument,
+        availableSpecificDocuments
+      );
+      console.log(
+        "Document spécifique sélectionné:",
+        specificDocument,
+        "pour la catégorie:",
+        selectedDocument
+      );
+
+      if (specificDocument) {
+        // Passer le document spécifique à la fonction de callback
+        onDocumentSelect(specificDocument);
+      } else {
+        // Fallback vers la catégorie générique
+        onDocumentSelect(selectedDocument);
+      }
+    } else {
+      // Aucun document spécifique disponible, utiliser la catégorie générique
+      onDocumentSelect(selectedDocument);
+    }
   };
 
   return (
@@ -152,16 +197,37 @@ const JDIDocumentSelection = ({
                       <p>
                         • Assurez-vous que toutes les informations sont lisibles
                       </p>
+                      <p>• La carte doit être valide et non expirée</p>
                     </>
                   ) : selectedDocument === "passport" ? (
                     <>
                       <p>• Déposer uniquement la page avec votre photo</p>
                       <p>• Vérifiez que le passeport est valide</p>
+                      <p>
+                        • Assurez-vous que toutes les informations sont lisibles
+                      </p>
                     </>
                   ) : selectedDocument === "driving_license" ? (
                     <>
                       <p>• Déposer le recto et le verso de votre permis</p>
                       <p>• Vérifiez que le permis n'est pas expiré</p>
+                      <p>• Toutes les informations doivent être visibles</p>
+                    </>
+                  ) : selectedDocument === "residence_permit" ? (
+                    <>
+                      <p>• Déposer le recto et le verso de votre titre</p>
+                      <p>• Vérifiez que le titre de séjour est valide</p>
+                      <p>
+                        • Assurez-vous que toutes les informations sont lisibles
+                      </p>
+                    </>
+                  ) : selectedDocument === "carte_vitale" ? (
+                    <>
+                      <p>• Déposer le recto et le verso de votre carte</p>
+                      <p>• Vérifiez que la carte est valide</p>
+                      <p>
+                        • Assurez-vous que toutes les informations sont lisibles
+                      </p>
                     </>
                   ) : (
                     <>

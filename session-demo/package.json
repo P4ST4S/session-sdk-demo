@@ -23,10 +23,12 @@
     "axios": "^1.10.0",
     "clsx": "^2.1.1",
     "datakeen-session-react": "1.0.18",
+    "i18next": "^25.4.2",
     "lucide-react": "^0.511.0",
     "qrcode": "^1.5.4",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-i18next": "^15.7.3",
     "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {

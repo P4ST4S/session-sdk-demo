@@ -1,227 +1,270 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useMemo, useCallback, memo } from "react";
 import Title from "../ui/Title";
 import Subtitle from "../ui/Subtitle";
 import type { onUploadFiles } from "../../types/uploadFiles";
+import type { ProcessingStep } from "../../types/session";
 import { analyzeFiles } from "../../services/analysis";
-import { codeToStep } from "../../services/utils";
 
 interface JDIProcessingProps {
-  onProcessingComplete: (success: boolean) => void;
+  onProcessingComplete: (success: boolean, retryCount?: number, analysisData?: unknown) => void;
   documentType: string;
   fileUploaded: onUploadFiles | null;
   documentTypeId: string;
-  onRetake: () => void;
+  retryCount?: number;
 }
 
-const processingSteps = [
+// Étapes de traitement pour l'analyse JDI
+const JDI_PROCESSING_STEPS: ProcessingStep[] = [
   {
-    title: "Analyse des documents",
-    subtitle: "Vérification de la qualité des images",
+    title: "Réception du document",
+    subtitle: "Téléchargement et vérification du format",
+    hasError: false,
   },
   {
-    title: "Validation des informations",
-    subtitle: "Lecture des données du document",
+    title: "Analyse de la qualité",
+    subtitle: "Contrôle de la netteté et de l'éclairage",
+    hasError: false,
   },
-  { title: "Vérification de sécurité", subtitle: "Contrôle d'authenticité" },
-  { title: "Finalisation", subtitle: "Traitement en cours..." },
+  {
+    title: "Extraction des données",
+    subtitle: "Lecture des informations du document",
+    hasError: false,
+  },
+  {
+    title: "Vérification finale",
+    subtitle: "Validation des données extraites",
+    hasError: false,
+  },
 ];
-const JDIProcessing = ({
-  onProcessingComplete,
-  documentType,
-  fileUploaded,
-  documentTypeId,
-  onRetake,
-}: JDIProcessingProps) => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [hasError, setHasError] = useState(false);
-  const [isDone, setIsDone] = useState(false);
-  const [conformityCode, setConformityCode] = useState<string | null>(null);
 
-  const analysisStartedRef = useRef(false);
-  useEffect(() => {
-    // Prevent multiple analysis runs
-    if (analysisStartedRef.current) return;
-    if (!fileUploaded) return;
+const JDIProcessing = memo(
+  ({
+    onProcessingComplete,
+    documentType,
+    fileUploaded,
+    documentTypeId,
+    retryCount = 0,
+  }: JDIProcessingProps) => {
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [currentStep, setCurrentStep] = useState(0);
+    const [processingSteps, setProcessingSteps] =
+      useState(JDI_PROCESSING_STEPS);
+    const [isComplete, setIsComplete] = useState(false);
+    const [analysisResult, setAnalysisResult] = useState<{
+      success: boolean;
+      code?: string;
+      data?: unknown;
+    } | null>(null);
 
-    analysisStartedRef.current = true;
-    const processFiles = async () => {
-      const sessionId = localStorage.getItem("sessionId");
-      if (!sessionId) {
-        setHasError(true);
-        onProcessingComplete(false);
-        setIsDone(true);
+    const processingStartedRef = useRef(false);
+    const processedFilesRef = useRef<string | null>(null);
+
+    // Créer une clé stable pour les fichiers uploadés
+    const filesKey = useMemo(() => {
+      if (!fileUploaded) return null;
+      return `${fileUploaded.front?.substring(0, 50) || "no-front"}-${
+        fileUploaded.back?.substring(0, 50) || "no-back"
+      }`;
+    }, [fileUploaded]);
+
+    // Callback stable pour onProcessingComplete
+    const stableOnProcessingComplete = useCallback(
+      (success: boolean, retryCount?: number, analysisData?: unknown) => {
+        onProcessingComplete(success, retryCount, analysisData);
+      },
+      [onProcessingComplete]
+    );
+
+    useEffect(() => {
+      // Empêcher les appels multiples
+      if (
+        !fileUploaded ||
+        !filesKey ||
+        isProcessing ||
+        processingStartedRef.current
+      ) {
         return;
       }
-      try {
-        const response: any = await analyzeFiles(
-          sessionId,
-          fileUploaded,
-          documentTypeId,
-          null,
-          false, // finish the session if true
-          true,
-          false
-        );
-        console.log("Analysis response:", response);
-        setConformityCode(
-          response?.data?.analysisResult?.job_status?.predictions?.[0]?.code ||
-            null
-        );
 
-        setIsDone(true);
-      } catch (error) {
-        setHasError(true);
-        setIsDone(true);
+      const sessionId = localStorage.getItem("sessionId");
+      if (!sessionId) {
+        stableOnProcessingComplete(false);
+        return;
+      }
+
+      // Vérifier si on a déjà traité ces mêmes fichiers
+      if (processedFilesRef.current === filesKey) {
+        return;
+      }
+
+      const processFiles = async () => {
+        try {
+          // Marquer le début du traitement
+          setIsProcessing(true);
+          processingStartedRef.current = true;
+          processedFilesRef.current = filesKey;
+
+          // Animation des étapes avec appel API réel à la fin
+          for (let i = 0; i < processingSteps.length; i++) {
+            setCurrentStep(i);
+
+            if (i < processingSteps.length - 1) {
+              // Délai entre les étapes (sauf la dernière)
+              await new Promise((resolve) => setTimeout(resolve, 800));
+            } else {
+              // Dernière étape : appel API réel
+              const response = await analyzeFiles(
+                sessionId,
+                fileUploaded,
+                documentTypeId,
+                null,
+                false, // save = false - don't save to session yet
+                false, // incrementAnalysis = false - don't auto-progress session
+                false
+              );
+
+              // Extract conformity code
+              const extractedCode =
+                response?.data?.analysisResult?.job_status?.predictions?.[0]
+                  ?.code || "2.0";
+
+              // Determine success based on code
+              const isSuccess = extractedCode === "1.0";
+
+              setAnalysisResult({ 
+                success: isSuccess, 
+                code: extractedCode, 
+                data: response 
+              });
+
+              // Marquer l'étape courante selon le résultat
+              setProcessingSteps((prev) =>
+                prev.map((step, index) =>
+                  index === i ? { ...step, hasError: !isSuccess } : step
+                )
+              );
+
+              // Petit délai pour voir le résultat
+              await new Promise((resolve) => setTimeout(resolve, 500));
+            }
+          }
+
+          setCurrentStep(processingSteps.length);
+          setIsComplete(true);
+        } catch {
+          // Marquer l'étape courante comme erreur
+          setProcessingSteps((prev) =>
+            prev.map((step, index) =>
+              index === currentStep ? { ...step, hasError: true } : step
+            )
+          );
+
+          setAnalysisResult({ success: false, data: null });
+          setIsComplete(true);
+        } finally {
+          setIsProcessing(false);
+        }
+      };
+
+      processFiles();
+    }, [
+      fileUploaded,
+      filesKey,
+      documentTypeId,
+      isProcessing,
+      stableOnProcessingComplete,
+      processingSteps.length,
+      currentStep,
+    ]);
+
+      // Auto-complete when analysis is done
+  useEffect(() => {
+    if (isComplete && analysisResult) {
+      setTimeout(() => {
+        // Passer le résultat, le retryCount actuel et les données de l'analyse
+        stableOnProcessingComplete(analysisResult.success, retryCount, analysisResult.data);
+      }, 1000);
+    }
+  }, [isComplete, analysisResult, stableOnProcessingComplete, retryCount]);
+
+    // Get the label for the document type
+    const getDocumentLabel = (documentType: string) => {
+      switch (documentType) {
+        case "national_id":
+          return "carte nationale d'identité";
+        case "passport":
+          return "passeport";
+        case "driving_license":
+          return "permis de conduire";
+        default:
+          return "document";
       }
     };
-    processFiles();
-  }, [onProcessingComplete, documentType, fileUploaded]);
 
-  useEffect(() => {
-    // While analysis is not finished, stay at step 0
-    if (!isDone && !hasError) {
-      setCurrentStep(0);
-      return;
-    }
-    // We want stepToStop to be the step in error (the one corresponding to conformityCode)
-    let stepToStop = codeToStep(conformityCode || "4");
-    // If codeToStep returns 0 (generic error), stop at the first step
-    if (stepToStop === 0) stepToStop = 1;
-    console.log("Step to stop (error):", stepToStop);
-
-    // When analysis is finished (success or error), start the animation
-    const interval = setInterval(() => {
-      setCurrentStep((prev) => {
-        if (prev < stepToStop - 1) {
-          return prev + 1;
-        } else {
-          clearInterval(interval);
-          if (stepToStop < 4) setHasError(true);
-          onProcessingComplete(stepToStop === 4);
-          return prev; // Stop at the step in error
-        }
-      });
-    }, 500); // Adjust the speed of the animation
-    return () => clearInterval(interval);
-  }, [onProcessingComplete, hasError, isDone, conformityCode]);
-
-  // Get the label for the document type
-  const getDocumentLabel = (documentType: string) => {
-    switch (documentType) {
-      case "national_id":
-        return "carte nationale d'identité";
-      case "passport":
-        return "passeport";
-      case "driving_license":
-        return "permis de conduire";
-      default:
-        return "document";
-    }
-  };
-
-  return (
-    <div className="flex flex-col justify-between h-full w-full">
-      <div className="flex-1 px-4 py-6 pt-11 md:px-8 md:py-8">
-        <div className="w-full max-w-md mx-auto space-y-6">
-          <div className="text-center space-y-4">
-            <Title className="text-xl md:text-2xl lg:text-3xl">
-              {hasError ? "Échec de l'analyse" : "Analyse en cours"}
-            </Title>
-            <Subtitle className="text-sm text-gray-600 leading-relaxed">
-              {hasError
-                ? "Une erreur est survenue lors de l'analyse du document. Veuillez réessayer."
-                : `Nous analysons votre ${getDocumentLabel(
-                    documentType
-                  )}. Cela peut prendre quelques instants.`}
-            </Subtitle>
-          </div>
-
-          <div className="w-full">
-            <div className="space-y-5">
-              {processingSteps.map((step, index) => (
-                <div key={index} className="flex items-start">
-                  <div className="mr-4 mt-1 flex-shrink-0">
-                    {hasError && index === currentStep ? (
-                      // Step in error - red cross
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white text-xs font-bold">
-                        ×
-                      </div>
-                    ) : index < currentStep ? (
-                      // Completed step - green check
-                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#11E5C5] text-white text-xs">
-                        ✓
-                      </div>
-                    ) : index === currentStep ? (
-                      // Current step - spinner
-                      <div className="w-6 h-6 rounded-full border-2 border-t-[#11E5C5] border-r-[#11E5C5] border-b-[#11E5C5] border-l-transparent animate-spin"></div>
-                    ) : (
-                      // Upcoming step - gray circle
-                      <div className="w-6 h-6 rounded-full border-2 border-gray-300"></div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[#3C3C40] text-sm">
-                      {step.title}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {step.subtitle}
-                    </p>
-                  </div>
-                </div>
-              ))}
+    return (
+      <div className="flex flex-col justify-between h-full w-full">
+        {/* Main content area */}
+        <div className="flex-1 px-4 py-6 pt-11 md:px-8 md:py-8">
+          <div className="w-full max-w-md mx-auto space-y-6">
+            {/* Header */}
+            <div className="text-center space-y-4">
+              <Title className="text-xl md:text-2xl lg:text-3xl">
+                Analyse en cours
+              </Title>
+              <Subtitle className="text-sm text-gray-600 leading-relaxed">
+                Nous analysons votre {getDocumentLabel(documentType)}. Cela peut
+                prendre quelques instants.
+              </Subtitle>
             </div>
-          </div>
 
-          <div className="w-full">
-            <div className="bg-gray-200 rounded-full h-2">
-              <div
-                className={
-                  hasError
-                    ? "bg-red-500 h-2 rounded-full transition-all duration-500 ease-out"
-                    : "bg-[#11E5C5] h-2 rounded-full transition-all duration-500 ease-out"
-                }
-                style={{
-                  width: `${
-                    ((currentStep + 1) / processingSteps.length) * 100
-                  }%`,
-                }}
-              ></div>
-            </div>
-            <p className="text-xs text-gray-500 mt-2 text-center">
-              Step {currentStep + 1} of {processingSteps.length}
-            </p>
-          </div>
+            {/* Processing steps with status indicators */}
+            <div className="w-full flex justify-center">
+              <div className="space-y-5">
+                {processingSteps.map((step, index: number) => (
+                  <div key={index} className="flex items-start">
+                    {/* Status indicator */}
+                    <div className="mr-4 mt-1 flex-shrink-0">
+                      {index < currentStep ? (
+                        step.hasError ? (
+                          // Error indicator - Red X
+                          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white text-xs">
+                            ✕
+                          </div>
+                        ) : (
+                          // Success indicator - Green checkmark
+                          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-[#11E5C5] text-white text-xs">
+                            ✓
+                          </div>
+                        )
+                      ) : index === currentStep ? (
+                        // Loading spinner only for the current step
+                        <div className="w-6 h-6 rounded-full border-2 border-t-[#11E5C5] border-r-[#11E5C5] border-b-[#11E5C5] border-l-transparent animate-spin"></div>
+                      ) : (
+                        // Empty circle for future steps
+                        <div className="w-6 h-6 rounded-full border-2 border-gray-300"></div>
+                      )}
+                    </div>
 
-          {/* Footer with buttons */}
-          {hasError && (
-            <div className="sticky bottom-0 bg-white border-t border-gray-100 p-4 md:p-6">
-              <div className="w-full max-w-md mx-auto">
-                {/* Mobile layout - stacked buttons */}
-                <div className="flex flex-col space-y-3 md:hidden">
-                  <button
-                    onClick={onRetake}
-                    className="w-full text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline py-2"
-                  >
-                    Reprendre le selfie
-                  </button>
-                </div>
-
-                {/* Desktop layout - horizontal buttons */}
-                <div className="hidden md:flex gap-3 justify-between items-center">
-                  <button
-                    onClick={onRetake}
-                    className="px-6 py-3 text-[#3C3C40] text-center font-poppins text-sm font-medium hover:underline border border-gray-300 rounded-lg"
-                  >
-                    Reprendre le selfie
-                  </button>
-                </div>
+                    {/* Step content */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-[#3C3C40] text-sm">
+                        {step.title}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {step.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
+
+JDIProcessing.displayName = "JDIProcessing";
 
 export default JDIProcessing;
